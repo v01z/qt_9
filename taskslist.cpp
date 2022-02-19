@@ -34,6 +34,15 @@ void TasksList::appendItem()
     item.done = false;
     mItems.append(item);
 
+    //debug
+    /*
+    qDebug() << "***** list vector inside TasksList module *****";
+    for (const auto &elem: mItems)
+        qDebug() << "done: " << elem.done << ", descr: " << elem.description;
+    qDebug() << "***** end TasksList module *****";
+    */
+    //end debug
+
     emit on_postItemAppended();
 
 }
@@ -59,6 +68,14 @@ void TasksList::writeDataToSQLiteBase()
 {
    //
     qDebug() << "here";
+    //debug
+    qDebug() << "***** list vector inside TasksList module *****";
+    for (const auto &elem: mItems)
+        qDebug() << "done: " << elem.done << ", descr: " << elem.description;
+    qDebug() << "***** end TasksList module *****";
+    //end debug
+
+
 }
 
 void TasksList::updateDataFromSQLiteBase()

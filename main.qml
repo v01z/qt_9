@@ -64,9 +64,11 @@ Window {
                         onClicked: model.done = checked
                     }
                     TextField{
+                        id: textField
                         text: model.description
                         onEditingFinished: model.description = text
                         Layout.fillWidth: true
+                        //on
                     }
                 }
             }
@@ -99,6 +101,7 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Покинуть это гостеприимное место")
             onClicked: {
+//                listView.textField.accepted()
                 listView.model.list.writeDataToSQLiteBase()
                 close()
             }
