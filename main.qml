@@ -7,75 +7,79 @@ import QtQuick.Controls 1.4 //for calendar
 import Tasks 1.0
 
 Window {
-    width: 580
-    height: 285
+    width: calendar.width + frameList.width + 30 //30 - всякие там margins
+    height: calendar.height + frameButtons.height + 30
     visible: true
     title: qsTr("qt_9")
-    Calendar{
-        id: calendar
-        onClicked: {
-            labelDate.text = calendar.selectedDate
-
-        }
-    }
-    Label {
-        id: labelDate
-        anchors.left: calendar.right
-        anchors.leftMargin: 10
-        anchors.topMargin: 10
-        //    text: calendar. currentDate ?
-        text: "  "
-    }
-
     Frame{
-        id: frame
-        anchors.left: calendar.right
-        anchors.top: labelDate.bottom
-        anchors.topMargin: 5
-        anchors.leftMargin: 10
-    //    Layout.fillWidth: true
-        ListView{
-            implicitWidth: 170
-            implicitHeight: 200
-            clip: true
-//            anchors.fill: parent
+        id: frameMain
+        anchors.fill: parent
 
-            model: TasksModel {
-                list: tasksList
-            }
-
-            delegate: RowLayout{
-                //if TextField.text has text then show the element
-                width: parent.width
-                CheckBox{
-                    checked: model.done
-                    onClicked: model.done = checked
-                }
-                TextField{
-                    text: model.description
-                    onEditingFinished: model.description = text
-                    Layout.fillWidth: true
-                }
+        Calendar{
+            id: calendar
+            onClicked: {
+                labelDate.text = Qt.formatDate(calendar.selectedDate, "dd.MM.yyyy")
             }
         }
-    }
-
-    RowLayout{
-        anchors.left: frame.right
-        Button{
-            id: btnAdd
-            text: qsTr("Add new item       ")
-  //          Layout.fillWidth: true
-            onClicked: tasksList.appendItem()
-        }
-        Button {
-            id: btnRemove
-            anchors.top: btnAdd.bottom
-            anchors.left: parent.left
-            text: qsTr("Remove completed")
- //           Layout.fillWidth: true
-            onClicked: tasksList.removeCompletedItems()
+        Label {
+            id: labelDate
+            anchors.left: calendar.right
+            anchors.leftMargin: 10
+            anchors.topMargin: 10
+            text: Qt.formatDate(new Date(), "dd.MM.yyyy")
         }
 
+        Frame{
+            id: frameList
+            anchors.left: calendar.right
+            anchors.top: labelDate.bottom
+            anchors.topMargin: 5
+            anchors.leftMargin: 10
+
+            ListView{
+                id: listView
+                implicitWidth: 170
+                implicitHeight: 200
+                clip: true
+
+                model: TasksModel {
+                    list: tasksList
+                }
+
+                delegate: RowLayout{
+                    width: parent.width
+                    CheckBox{
+                        checked: model.done
+                        onClicked: model.done = checked
+                    }
+                    TextField{
+                        text: model.description
+                        onEditingFinished: model.description = text
+                        Layout.fillWidth: true
+                    }
+                }
+            }
+        }
+        Frame{
+            id: frameButtons
+            anchors.top: calendar.bottom
+            anchors.topMargin: 5
+            RowLayout{
+
+                Button{
+                    id: btnAdd
+                    //text: qsTr("Add new task")
+                    text: qsTr("Добавить задание")
+                    //          Layout.fillWidth: true
+                    onClicked: tasksList.appendItem()
+                }
+                Button {
+                    id: btnRemove
+                    //text: qsTr("Remove completed tasks")
+                    text: qsTr("Удалить выполненные задания")
+                    onClicked: tasksList.removeCompletedItems()
+                }
+            }
+        }
     }
 }
