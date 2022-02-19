@@ -5,7 +5,7 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 1.4 //for calendar
 
 Window {
-    width: 480
+    width: 580
     height: 285
     visible: true
     title: qsTr("qt_9")
@@ -42,6 +42,7 @@ Frame{
 //       model: 100
        model: 10
        delegate: RowLayout{
+           //if TextField.text has text then show the element
            CheckBox{}
            TextField{
         //       width: 250
