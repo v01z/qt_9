@@ -19,6 +19,8 @@ Window {
             id: calendar
             onClicked: {
                 labelDate.text = Qt.formatDate(calendar.selectedDate, "dd.MM.yyyy")
+//                listView.model.list.funcToUpdateModelFromSQLite(DateTime(calendar.selected))
+
             }
         }
         Label {
@@ -48,6 +50,7 @@ Window {
 
                 delegate: RowLayout{
                     width: parent.width
+
                     CheckBox{
                         checked: model.done
                         onClicked: model.done = checked
