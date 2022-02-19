@@ -1,6 +1,11 @@
 QT += quick
 
 CONFIG += c++11
+#CONFIG += sqlite3
+
+#PKGCONFIG += sqlite3
+#QMAKE_CONFIG += sqlite3
+#LIBS += sqlite3
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.

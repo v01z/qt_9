@@ -1,5 +1,8 @@
 #include "taskslist.h"
 #include <QDebug>
+//#include <sqlite3.h>
+//#include "/usr/include/sqlite3.h"
+#include <sqlite3ext.h>
 
 TasksList::TasksList(QObject *parent) : QObject(parent)
 {
@@ -74,6 +77,25 @@ void TasksList::writeDataToSQLiteBase()
         qDebug() << "done: " << elem.done << ", descr: " << elem.description;
     qDebug() << "***** end TasksList module *****";
     //end debug
+
+    /*
+    const char* SQL = "CREATE TABLE IF NOT EXISTS foo(a,b,c); INSERT INTO FOO VALUES(1,2,3); INSERT INTO FOO SELECT * FROM FOO;";
+
+    sqlite3 *db = 0; // хэндл объекта соединение к БД
+    char *err = 0;
+
+    // открываем соединение
+    if( sqlite3_open("my_cosy_database.dblite", &db) )
+        std::fprintf(stderr, "Ошибка открытия/создания БД: %s\n", sqlite3_errmsg(db));
+    // выполняем SQL
+    else if (sqlite3_exec(db, SQL, 0, 0, &err))
+    {
+        std::fprintf(stderr, "Ошибка SQL: %sn", err);
+        sqlite3_free(err);
+    }
+    // закрываем соединение
+    sqlite3_close(db);
+    */
 
 
 }
