@@ -82,13 +82,16 @@ Window {
                 }
             }
         }
-                Button{
-                    id: buttonClose
-                    anchors.top: frameButtons.bottom
-                    anchors.topMargin: 5
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: qsTr("Покинуть это гостеприимное место")
-                    onClicked: close()
-                }
+        Button{
+            id: buttonClose
+            anchors.top: frameButtons.bottom
+            anchors.topMargin: 5
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("Покинуть это гостеприимное место")
+            onClicked: {
+                listView.model.list.writeDataToSQLiteBase()
+                close()
+            }
+        }
     }
 }

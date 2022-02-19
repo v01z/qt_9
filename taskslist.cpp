@@ -62,3 +62,9 @@ void TasksList::removeCompletedItems()
             ++i;
     }
 }
+
+void TasksList::writeDataToSQLiteBase()
+{
+   //
+    qDebug() << "here";
+}

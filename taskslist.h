@@ -30,6 +30,7 @@ signals:
 public slots:
     void appendItem();
     void removeCompletedItems();
+    void writeDataToSQLiteBase();
 
 
 private:
