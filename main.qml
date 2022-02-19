@@ -11,8 +11,6 @@ Window {
     title: qsTr("qt_9")
 Calendar{
     id: calendar
-//    calendar.style:
-//    navigationBar.
     onClicked: {
         labelDate.text = calendar.selectedDate
 
@@ -20,7 +18,6 @@ Calendar{
 }
 Label {
     id: labelDate
-    //anchors.top: calendar.bottom
     anchors.left: calendar.right
     anchors.leftMargin: 10
     anchors.topMargin: 10
@@ -34,18 +31,33 @@ Frame{
    anchors.top: labelDate.bottom
    anchors.topMargin: 5
    anchors.leftMargin: 10
-//   anchors.topMargin: 10
    ListView{
        implicitWidth: 170
        implicitHeight: 200
+       clip: true
+//       model: 10
+       model: ListModel {
+           ListElement{
+               done: true
+               description: "Wash the car"
+           }
+           ListElement{
+               done: false
+               description: "Fix the sink"
+           }
+       }
 
-//       model: 100
-       model: 10
        delegate: RowLayout{
            //if TextField.text has text then show the element
-           CheckBox{}
+           width: parent.width
+           CheckBox{
+               checked: model.done
+               onClicked: model.done = checked
+           }
            TextField{
-        //       width: 250
+               text: model.description
+               onEditingFinished: model.description = text
+               Layout.fillWidth: true
            }
        }
    }
