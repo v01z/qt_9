@@ -36,14 +36,6 @@ void TasksList::appendItem()
 
     emit on_postItemAppended();
 
-    //debug
-    qDebug() << "Vector is now has size: " << mItems.size();
-    for (const auto &elem: mItems)
-    {
-        qDebug() << "done: "<< elem.done << " | description: " << elem.description;
-    }
-    //end debug
-
 }
 
 void TasksList::removeCompletedItems()
@@ -67,4 +59,20 @@ void TasksList::writeDataToSQLiteBase()
 {
    //
     qDebug() << "here";
+}
+
+void TasksList::updateDataFromSQLiteBase()
+{
+    //debug
+   mItems.clear();
+   mItems.append( { false, QStringLiteral("New task number one") });
+   mItems.append( { true, QStringLiteral("New task number two") });
+
+   qDebug() << "Should be updated";
+   qDebug() << mItems.size();
+    for (const auto &elem: mItems)
+    {
+        qDebug() << "done: "<< elem.done << " | description: " << elem.description;
+    }
+    //end debug
 }

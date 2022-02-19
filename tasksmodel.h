@@ -34,8 +34,6 @@ public:
     TasksList *list() const;
     void setList(TasksList *list);
 
-
-
 private:
     TasksList *mList;
 };

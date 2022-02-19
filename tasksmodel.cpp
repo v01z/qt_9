@@ -1,10 +1,12 @@
 #include "tasksmodel.h"
 #include "taskslist.h"
+#include <QDebug>
 
 TasksModel::TasksModel(QObject *parent)
     : QAbstractListModel { parent },
       mList { nullptr }
 {
+
 }
 
 int TasksModel::rowCount(const QModelIndex &parent) const
@@ -23,8 +25,6 @@ QVariant TasksModel::data(const QModelIndex &index, int role) const
     if (!index.isValid() || !mList)
         return QVariant();
 
-
-    //my
     const TaskItem item { mList->items().at(index.row()) };
     switch (role){
         case DoneRole:
@@ -34,13 +34,12 @@ QVariant TasksModel::data(const QModelIndex &index, int role) const
 
         //case DateTimeRole:
     }
-    //
+
     return QVariant();
 }
 
 bool TasksModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    //my
     if (!mList)
         return false;
 
@@ -54,9 +53,7 @@ bool TasksModel::setData(const QModelIndex &index, const QVariant &value, int ro
             break;
         //case DateTimeRole:
     }
-    //my
 
-    //if (data(index, role) != value) {
     if (mList->setItemAt(index.row(), item)) {
         emit dataChanged(index, index, QVector<int>() << role);
         return true;

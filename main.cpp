@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
 
     //change to smth like URL-mode
     qmlRegisterType<TasksModel>("Tasks", 1, 0, "TasksModel");
+
     qmlRegisterUncreatableType<TasksList>("Tasks", 1, 0, "TasksList",
         QStringLiteral("TasksList should not be created in QML"));
 
@@ -24,6 +25,12 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty(QStringLiteral("tasksList"),
         &tasksList);
+
+    /*
+    TasksModel tasksModel;
+    tasksModel.setList(&tasksList);
+    engine.rootContext()->setContextProperty(QStringLiteral("tasksModel"), &tasksModel);
+    */
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

@@ -19,7 +19,13 @@ Window {
             id: calendar
             onClicked: {
                 labelDate.text = Qt.formatDate(calendar.selectedDate, "dd.MM.yyyy")
+
 //                listView.model.list.funcToUpdateModelFromSQLite(DateTime(calendar.selected))
+
+                //******
+                listView.model.list.updateDataFromSQLiteBase()
+                listView.model.list = tasksList //update data in here
+                //*****
 
             }
         }
@@ -44,12 +50,14 @@ Window {
                 implicitHeight: 200
                 clip: true
 
+//                model: tasksModel
                 model: TasksModel {
                     list: tasksList
                 }
 
                 delegate: RowLayout{
-                    width: parent.width
+//                    width: parent.width
+                    width: listView.width
 
                     CheckBox{
                         checked: model.done
@@ -74,7 +82,6 @@ Window {
                     id: btnAdd
                     //text: qsTr("Add new task")
                     text: qsTr("Добавить задание")
-                    //          Layout.fillWidth: true
                     onClicked: tasksList.appendItem()
                 }
                 Button {
