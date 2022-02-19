@@ -8,7 +8,7 @@ import Tasks 1.0
 
 Window {
     width: calendar.width + frameList.width + 30 //30 - всякие там margins
-    height: calendar.height + frameButtons.height + 30
+    height: calendar.height + frameButtons.height + buttonClose.height + 30
     visible: true
     title: qsTr("qt_9")
     Frame{
@@ -64,6 +64,7 @@ Window {
             id: frameButtons
             anchors.top: calendar.bottom
             anchors.topMargin: 5
+            anchors.horizontalCenter: parent.horizontalCenter
             RowLayout{
 
                 Button{
@@ -81,5 +82,13 @@ Window {
                 }
             }
         }
+                Button{
+                    id: buttonClose
+                    anchors.top: frameButtons.bottom
+                    anchors.topMargin: 5
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: qsTr("Покинуть это гостеприимное место")
+                    onClicked: close()
+                }
     }
 }

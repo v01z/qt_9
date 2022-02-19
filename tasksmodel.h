@@ -3,7 +3,7 @@
 
 #include <QAbstractListModel>
 
-class TasksList; //Скажем тут, что есть и такой класс
+class TasksList;
 
 class TasksModel : public QAbstractListModel
 {

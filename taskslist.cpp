@@ -1,4 +1,5 @@
 #include "taskslist.h"
+#include <QDebug>
 
 TasksList::TasksList(QObject *parent) : QObject(parent)
 {
@@ -27,33 +28,37 @@ bool TasksList::setItemAt(int index, const TaskItem &item)
 
 void TasksList::appendItem()
 {
-    //Сообщим, чтоб будем добавлять задание
     emit on_preItemAppended();
 
     TaskItem item;
     item.done = false;
     mItems.append(item);
 
-    //Сообщим, что добавили
     emit on_postItemAppended();
+
+    //debug
+    qDebug() << "Vector is now has size: " << mItems.size();
+    for (const auto &elem: mItems)
+    {
+        qDebug() << "done: "<< elem.done << " | description: " << elem.description;
+    }
+    //end debug
+
 }
 
 void TasksList::removeCompletedItems()
 {
     for (int i{}; i < mItems.size(); )
     {
-        //Если работа выполнена, то удаляем
         if (mItems.at(i).done)
         {
-         //Кричим на всю округу, что будем удалять
         emit on_preItemRemoved(i);
 
         mItems.remove(i);
 
-        //
         emit on_postItemRemoved();
         }
-        else //Если галочка стоит, то пропускаем
+        else
             ++i;
     }
 }
