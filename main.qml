@@ -4,6 +4,8 @@ import QtQuick.Controls 2.5
 import QtQuick.Window 2.12
 import QtQuick.Controls 1.4 //for calendar
 
+import Tasks 1.0
+
 Window {
     width: 580
     height: 285
@@ -35,7 +37,11 @@ Frame{
        implicitWidth: 170
        implicitHeight: 200
        clip: true
+
+       model: TasksModel {}
+
 //       model: 10
+       /*
        model: ListModel {
            ListElement{
                done: true
@@ -46,6 +52,7 @@ Frame{
                description: "Fix the sink"
            }
        }
+       */
 
        delegate: RowLayout{
            //if TextField.text has text then show the element
