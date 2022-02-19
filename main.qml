@@ -38,21 +38,9 @@ Frame{
        implicitHeight: 200
        clip: true
 
-       model: TasksModel {}
-
-//       model: 10
-       /*
-       model: ListModel {
-           ListElement{
-               done: true
-               description: "Wash the car"
-           }
-           ListElement{
-               done: false
-               description: "Fix the sink"
-           }
+       model: TasksModel {
+           list: tasksList
        }
-       */
 
        delegate: RowLayout{
            //if TextField.text has text then show the element

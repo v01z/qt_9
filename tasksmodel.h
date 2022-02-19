@@ -3,9 +3,12 @@
 
 #include <QAbstractListModel>
 
+class TasksList; //Скажем тут, что есть и такой класс
+
 class TasksModel : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(TasksList *list READ list WRITE setList)
 
 public:
     explicit TasksModel(QObject *parent = nullptr);
@@ -28,7 +31,11 @@ public:
 
     virtual QHash<int, QByteArray> roleNames() const override;
 
+    TasksList *list() const;
+    void setList(TasksList *list);
+
 private:
+    TasksList *mList;
 };
 
 #endif // TASKSMODEL_H

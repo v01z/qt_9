@@ -1,6 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 
+#include "taskslist.h"
 #include "tasksmodel.h"
 
 int main(int argc, char *argv[])
@@ -11,12 +13,18 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    //my
     //change to smth like URL-mode
     qmlRegisterType<TasksModel>("Tasks", 1, 0, "TasksModel");
-    //
+    qmlRegisterUncreatableType<TasksList>("Tasks", 1, 0, "TasksList",
+        QStringLiteral("TasksList should not be created in QML"));
+
+    TasksList tasksList;
 
     QQmlApplicationEngine engine;
+
+    engine.rootContext()->setContextProperty(QStringLiteral("tasksList"),
+        &tasksList);
+
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
