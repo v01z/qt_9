@@ -78,22 +78,13 @@ void TasksList::writeDataToSQLiteBase()
     qDebug() << "***** end TasksList module *****";
     //end debug
 
-//    const char* SQL = "CREATE TABLE IF NOT EXISTS foo(a,b,c); INSERT INTO FOO VALUES(1,2,3); INSERT INTO FOO SELECT * FROM FOO;";
-
     //https://www.sqlitetutorial.net/sqlite-autoincrement/
 
-    const char* SQL =
-            //"CREATE TABLE ORGANIZER (\"surname\" VARCHAR,\"name\" VARCHAR, \"id\" INTEGER PRIMARY KEY  NOT NULL ,\"flag\" BOOL)";
-            //"CREATE TABLE ORGANIZER (\"id\" INTEGER PRIMARY KEY NOT NULL,\"done\" BOOL, \"task\" VARCHAR)";
-            "CREATE TABLE ORGANIZER (\"done\" BOOL, \"task\" VARCHAR)";
+    const QString SQL_QUERY_CREATE =
+            "CREATE TABLE IF NOT EXISTS ORGANIZER (\"done\" BOOL, \"task\" VARCHAR)";
 
-    const char* SQL_INSERT =
-            "INSERT INTO ORGANIZER VALUES (0, \"my very first task\")";
 
-    const size_t MAX_STR_SIZE { 128 };
-//    char SQL_QUERY [MAX_STR_SIZE];
-
-    QString SQL_QUERY_STR_BEGIN { "INSERT INTO ORGANIZER VALUES (" };
+    const QString SQL_QUERY_INSERT_TEMPLATE { "INSERT INTO ORGANIZER VALUES (" };
 
     sqlite3 *db = 0; // хэндл объекта соединение к БД
     char *err = 0;
@@ -104,14 +95,20 @@ void TasksList::writeDataToSQLiteBase()
         std::fprintf(stderr, "Ошибка открытия/создания БД: %s\n", sqlite3_errmsg(db));
         return;
     }
+
+    if (sqlite3_exec(db, SQL_QUERY_CREATE.toStdString().c_str(), 0, 0, &err))
+        {
+            std::fprintf(stderr, "Ошибка SQL: %sn", err);
+            sqlite3_free(err);
+        }
+
+
     // выполняем SQL
-    //else if (sqlite3_exec(db, SQL, 0, 0, &err))
     for (const auto &elem : mItems)
     {
-        QString SQL_QUERY_STR { SQL_QUERY_STR_BEGIN + (elem.done?"1":"0") + ", \"" + elem.description + "\")" };
+        QString SQL_QUERY_STR { SQL_QUERY_INSERT_TEMPLATE + (elem.done?"1":"0") + ", \"" + elem.description + "\")" };
         qDebug() << SQL_QUERY_STR;
 
-        //if (sqlite3_exec(db, SQL_INSERT, 0, 0, &err))
         if (sqlite3_exec(db, SQL_QUERY_STR.toStdString().c_str(), 0, 0, &err))
         {
             std::fprintf(stderr, "Ошибка SQL: %sn", err);
@@ -126,6 +123,55 @@ void TasksList::writeDataToSQLiteBase()
 
 void TasksList::updateDataFromSQLiteBase()
 {
+
+
+    const QString SQL_QUERY_CREATE =
+            "CREATE TABLE IF NOT EXISTS ORGANIZER (\"done\" BOOL, \"task\" VARCHAR)";
+
+
+    //const QString SQL_QUERY_INSERT_TEMPLATE { "INSERT INTO ORGANIZER VALUES (" };
+    const QString SQL_QUERY_SELECT_TEMPLATE { "SELECT * FROM ORGANIZER" };
+
+    sqlite3 *db = 0; // хэндл объекта соединение к БД
+    char *err = 0;
+
+    // открываем соединение
+    if( sqlite3_open("my_cosy_database.dblite", &db) )
+    {
+        std::fprintf(stderr, "Ошибка открытия/создания БД: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+
+    if (sqlite3_exec(db, SQL_QUERY_CREATE.toStdString().c_str(), 0, 0, &err))
+        {
+            std::fprintf(stderr, "Ошибка SQL: %sn", err);
+            sqlite3_free(err);
+        }
+
+
+    // выполняем SQL
+    for (const auto &elem : mItems)
+    {
+        QString SQL_QUERY_STR { SQL_QUERY_INSERT_TEMPLATE + (elem.done?"1":"0") + ", \"" + elem.description + "\")" };
+        qDebug() << SQL_QUERY_STR;
+
+        if (sqlite3_exec(db, SQL_QUERY_STR.toStdString().c_str(), 0, 0, &err))
+        {
+            std::fprintf(stderr, "Ошибка SQL: %sn", err);
+            sqlite3_free(err);
+        }
+    }
+    // закрываем соединение
+    sqlite3_close(db);
+
+
+
+
+
+
+
+
+
     //debug
    mItems.clear();
    mItems.append( { false, QStringLiteral("New task number one") });
