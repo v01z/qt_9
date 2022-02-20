@@ -82,52 +82,38 @@ void TasksList::removeCompletedItems()
 
 void TasksList::writeDataToSQLiteBase()
 {
-   //
-    //debug
-    qDebug() << "***** list vector inside TasksList module *****";
-    for (const auto &elem: mItems)
-        qDebug() << "done: " << elem.done << ", descr: " << elem.description;
-    qDebug() << "***** end TasksList module *****";
-    //end debug
-
-    //https://www.sqlitetutorial.net/sqlite-autoincrement/
-
     const QString SQL_QUERY_CREATE =
-            //"CREATE TABLE IF NOT EXISTS ORGANIZER (\"done\" BOOL, \"task\" VARCHAR, \"date\" VARCHAR)";
-            //"CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' BOOL, \'task\' VARCHAR, \'date\' VARCHAR)";
             "CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' INTEGER, \'task\' TEXT, \'date\' TEXT);";
-
 
     const QString SQL_QUERY_INSERT_TEMPLATE { "INSERT INTO ORGANIZER VALUES (" };
 
-    sqlite3 *db = 0; // хэндл объекта соединение к БД
-    char *err = 0;
+    sqlite3 *db { nullptr };
+    char *err { nullptr };
 
-    // открываем соединение
-    if( sqlite3_open("my_cosy_database.dblite", &db) )
+    if( sqlite3_open("my_cosy_database.dblite", &db) != SQLITE_OK)
     {
         std::fprintf(stderr, "Ошибка открытия/создания БД: %s\n", sqlite3_errmsg(db));
         return;
     }
 
-    if (sqlite3_exec(db, SQL_QUERY_CREATE.toStdString().c_str(), 0, 0, &err))
+    if (sqlite3_exec(db, SQL_QUERY_CREATE.toStdString().c_str(), 0, 0, &err) != SQLITE_OK)
         {
             std::fprintf(stderr, "Ошибка SQL: %sn", err);
             sqlite3_free(err);
         }
 
-
-    // выполняем SQL
     for (const auto &elem : mItems)
     {
-        //QString SQL_QUERY_STR { SQL_QUERY_INSERT_TEMPLATE + (elem.done?"1":"0") + ", \"" +
+        //debug
+        qDebug() << elem.date;
+        //end debug
+
         QString SQL_QUERY_STR { SQL_QUERY_INSERT_TEMPLATE + (elem.done?'1':'0') + ", \'" +
-            //elem.description + "\", \"" + (elem.date).toString("yyyy-MM-dd") + "\")" };
-            //elem.description + "\", \'" + (elem.date).toString("yyyy-MM-dd") + "\')" };
             elem.description + "\', \'" + (elem.date).toString("yyyy-MM-dd") + "\');" };
+
         qDebug() << SQL_QUERY_STR;
 
-        if (sqlite3_exec(db, SQL_QUERY_STR.toStdString().c_str(), 0, 0, &err))
+        if (sqlite3_exec(db, SQL_QUERY_STR.toStdString().c_str(), 0, 0, &err) != SQLITE_OK)
         {
             std::fprintf(stderr, "Ошибка SQL: %sn", err);
             sqlite3_free(err);
@@ -167,10 +153,26 @@ void TasksList::updateDataFromSQLiteBase()
 
                 newItem.done = sqlite3_column_int(stmt, 0);
                 //newItem.description = QString(sqlite3_column_text(stmt, 1));
+                qDebug() << newItem.done;
                 newItem.description = QString((const char*)sqlite3_column_text(stmt, 1));
+                qDebug() << newItem.description;
                 //newItem.date = QDate::fromString(QString(sqlite3_column_text(stmt,2), "yyyy-MM-dd"));
                 //newItem.date = QDate::fromString(QString((const char*)sqlite3_column_text(stmt,2), "yyyy-MM-dd"));
-                newItem.date = QDate::fromString(QString((const char*)sqlite3_column_text(stmt,2)));
+                const unsigned char * dateC = sqlite3_column_text(stmt,2);
+                //std::printf("printf date: %s\n", sqlite3_column_text(stmt,2));
+                std::printf("printf date: %s\n", dateC);
+                QString qstr = QString((const char*)dateC);
+                qDebug() << "qstr is: " << qstr;
+                //newItem.date = QDate::fromString(qstr, Qt::DateFormat("yyyy-MM-dd"));
+                //
+               // newItem.date = QDate::fromString(qstr, "yyyy-MM-dd");
+                //
+                newItem.date = QDate::fromString(QString((const char*)sqlite3_column_text(stmt,2)),
+                                                 "yyyy-MM-dd");
+                //
+                //newItem.date = QDate::fromString(QString((const char*)sqlite3_column_text(stmt,2)));
+//                newItem.date = QDate::currentDate();
+                qDebug() << newItem.date;
 
                 mItems.append(newItem);
             }
