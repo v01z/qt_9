@@ -21,6 +21,7 @@ public:
 
     bool setItemAt(int index, const TaskItem &item);
 
+    //int callback(void *, int, char **, char **);
 
 signals:
     void on_preItemAppended();
@@ -39,6 +40,10 @@ public slots:
 
 private:
     QVector<TaskItem> mItems;
+
+
 };
+
+int callback(void *, int, char **, char **);
 
 #endif // TASKSLIST_H

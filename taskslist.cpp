@@ -10,6 +10,8 @@ TasksList::TasksList(QObject *parent) : QObject(parent)
     mItems.append( { true, QStringLiteral("Wash the car"), QDate::currentDate() });
     mItems.append( { false, QStringLiteral("Fix the sink"), QDate::currentDate() });
     //select * where date ==  currentDate
+
+    updateDataFromSQLiteBase();
 }
 
 QVector<TaskItem> TasksList::items() const
@@ -77,7 +79,6 @@ void TasksList::removeCompletedItems()
 void TasksList::writeDataToSQLiteBase()
 {
    //
-    /*
     qDebug() << "here";
     //debug
     qDebug() << "***** list vector inside TasksList module *****";
@@ -89,7 +90,9 @@ void TasksList::writeDataToSQLiteBase()
     //https://www.sqlitetutorial.net/sqlite-autoincrement/
 
     const QString SQL_QUERY_CREATE =
-            "CREATE TABLE IF NOT EXISTS ORGANIZER (\"done\" BOOL, \"task\" VARCHAR)";
+            //"CREATE TABLE IF NOT EXISTS ORGANIZER (\"done\" BOOL, \"task\" VARCHAR, \"date\" VARCHAR)";
+            //"CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' BOOL, \'task\' VARCHAR, \'date\' VARCHAR)";
+            "CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' INTEGER, \'task\' TEXT, \'date\' TEXT);";
 
 
     const QString SQL_QUERY_INSERT_TEMPLATE { "INSERT INTO ORGANIZER VALUES (" };
@@ -114,7 +117,11 @@ void TasksList::writeDataToSQLiteBase()
     // выполняем SQL
     for (const auto &elem : mItems)
     {
-        QString SQL_QUERY_STR { SQL_QUERY_INSERT_TEMPLATE + (elem.done?"1":"0") + ", \"" + elem.description + "\")" };
+        //QString SQL_QUERY_STR { SQL_QUERY_INSERT_TEMPLATE + (elem.done?"1":"0") + ", \"" +
+        QString SQL_QUERY_STR { SQL_QUERY_INSERT_TEMPLATE + (elem.done?'1':'0') + ", \'" +
+            //elem.description + "\", \"" + (elem.date).toString("yyyy-MM-dd") + "\")" };
+            //elem.description + "\", \'" + (elem.date).toString("yyyy-MM-dd") + "\')" };
+            elem.description + "\', \'" + (elem.date).toString("yyyy-MM-dd") + "\');" };
         qDebug() << SQL_QUERY_STR;
 
         if (sqlite3_exec(db, SQL_QUERY_STR.toStdString().c_str(), 0, 0, &err))
@@ -125,7 +132,6 @@ void TasksList::writeDataToSQLiteBase()
     }
     // закрываем соединение
     sqlite3_close(db);
-    */
 
 
 }
@@ -134,13 +140,13 @@ void TasksList::updateDataFromSQLiteBase()
 {
 
 
-    /*
-    const QString SQL_QUERY_CREATE =
-            "CREATE TABLE IF NOT EXISTS ORGANIZER (\"done\" BOOL, \"task\" VARCHAR)";
+   const QString SQL_QUERY_CREATE =
+            //"CREATE TABLE IF NOT EXISTS ORGANIZER (\"done\" BOOL, \"task\" VARCHAR, \"date\" VARCHAR)";
+            //"CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' BOOL, \'task\' VARCHAR, \'date\' VARCHAR)";
+            "CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' INTEGER, \'task\' TEXT, \'date\' TEXT);";
 
 
-    //const QString SQL_QUERY_INSERT_TEMPLATE { "INSERT INTO ORGANIZER VALUES (" };
-    const QString SQL_QUERY_SELECT_TEMPLATE { "SELECT * FROM ORGANIZER" };
+    const QString SQL_QUERY_SELECT_TEMPLATE { "SELECT * FROM ORGANIZER VALUES (" };
 
     sqlite3 *db = 0; // хэндл объекта соединение к БД
     char *err = 0;
@@ -157,12 +163,58 @@ void TasksList::updateDataFromSQLiteBase()
             std::fprintf(stderr, "Ошибка SQL: %sn", err);
             sqlite3_free(err);
         }
+     //sqlite3_stmt *stmt;
+//sqlite3_prepare_v2(db, "select * from demo where date == ", -1, &stmt, NULL);
 
+//sqlite3_bind_int(stmt, 1, 16);
+
+    /*
+while ( (rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+    std::printf("%s is %d years old\n", sqlite3_column_text(stmt, 0), sqlite3_column_int(stmt, 1));
+}
+*/
+
+    sqlite3_stmt *res;
+    //int rc = sqlite3_prepare_v2(db, "SELECT * FROM ORGANIZER WHERE date == 2022-02-20", -1, &res, 0);
+
+    char *err_msg = 0;
+    //const char *sql = "SELECT * FROM ORGANIZER";
+    const char *sql = "SELECT * FROM ORGANIZER;";
+
+    int rc = sqlite3_exec(db, sql, callback, 0, &err_msg);
+
+    if (rc != SQLITE_OK)
+    {
+        //say error
+        //qDebug() << "an error happened during sqlte3_prepare";
+        qDebug() << "an error happened during sqlite3_exec";
+        std::fprintf(stderr, "SQL error: %s\n", err_msg);
+//        qDebug() << err_msg;
+        sqlite3_close(db);
+        return;
+    }
+    /*
+    rc = sqlite3_step(res);
+    if (rc == SQLITE_ROW) {
+            std::printf("%s\n", sqlite3_column_text(res, 0));
+        }
+        */
+//    int i{};
+    /*
+    while (sqlite3_step(res) == SQLITE_ROW)
+    {
+        qDebug() << "row " << i++ << ": " << sqlite3_column_text(res,1);
+    }
+    */
+
+/// ////
 
     // выполняем SQL
+    /*
     for (const auto &elem : mItems)
     {
-        QString SQL_QUERY_STR { SQL_QUERY_INSERT_TEMPLATE + (elem.done?"1":"0") + ", \"" + elem.description + "\")" };
+        QString SQL_QUERY_STR { SQL_QUERY_INSERT_TEMPLATE + (elem.done?"1":"0") + ", \"" +
+            elem.description + "\", \"" + (elem.date).toString("yyyy-MM-dd") + "\")" };
         qDebug() << SQL_QUERY_STR;
 
         if (sqlite3_exec(db, SQL_QUERY_STR.toStdString().c_str(), 0, 0, &err))
@@ -171,14 +223,10 @@ void TasksList::updateDataFromSQLiteBase()
             sqlite3_free(err);
         }
     }
+    */
     // закрываем соединение
+
     sqlite3_close(db);
-
-*/
-
-
-
-
 
 
 
@@ -196,3 +244,15 @@ void TasksList::updateDataFromSQLiteBase()
     }
     //end debug
 }
+
+int callback(void *NotUsed, int argc, char **argv,
+             char **azColName) {
+
+    static int row_count{};
+    std::printf("************ row number %d: *********** \n", row_count);
+
+    for (int i{}; i < argc; i++)
+    {
+        std::printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+    }
+    }
