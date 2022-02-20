@@ -9,6 +9,13 @@ struct TaskItem{
     bool done;
     QString description;
     QDate date;
+
+    //should find and change other equals in the code
+    bool operator ==(const TaskItem &other) const
+    {
+       return std::tie(other.done, other.description, other.date) ==
+               std::tie(done, description, date);
+    }
 };
 
 class TasksList : public QObject
@@ -23,6 +30,8 @@ public:
 
     //int callback(void *, int, char **, char **);
 
+//    void updateCurrentItems(QDate&);
+
 signals:
     void on_preItemAppended();
     void on_postItemAppended();
@@ -35,11 +44,17 @@ public slots:
     void removeCompletedItems();
 
     void writeDataToSQLiteBase(); // *************
-    void updateDataFromSQLiteBase();// ***********
 
+    //void updateCurrentItems(QDate&);
+    void updateCurrentItems(QDate);
 
 private:
-    QVector<TaskItem> mItems;
+    QVector<TaskItem> mFullDataItems;
+    //QVector<TaskItem> mItems;
+    QVector<TaskItem> mCurrentItems;
+
+    void getDataFromDB();
+    void updateFullDataItems();
 
 
 };

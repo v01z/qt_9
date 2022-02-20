@@ -10,25 +10,29 @@ TasksList::TasksList(QObject *parent) : QObject(parent)
 {
     //**********
     /*
-    mItems.append( { true, QStringLiteral("Wash the car"), QDate::currentDate() });
-    mItems.append( { false, QStringLiteral("Fix the sink"), QDate::currentDate() });
+    mCurrentItems.append( { true, QStringLiteral("Wash the car"), QDate::currentDate() });
+    mCurrentItems.append( { false, QStringLiteral("Fix the sink"), QDate::currentDate() });
     */
     //select * where date ==  currentDate
 
-    updateDataFromSQLiteBase();
+//    updateDataFromSQLiteBase();
+    getDataFromDB();
+
+    QDate date { QDate::currentDate() };
+    updateCurrentItems(date);
 }
 
 QVector<TaskItem> TasksList::items() const
 {
-    return mItems;
+    return mCurrentItems;
 }
 
 bool TasksList::setItemAt(int index, const TaskItem &item)
 {
-   if (index < 0 || index >= mItems.size())
+   if (index < 0 || index >= mCurrentItems.size())
        return false;
 
-   const TaskItem &oldItem = mItems.at(index);
+   const TaskItem &oldItem = mCurrentItems.at(index);
    //if (item.done == oldItem.done && //*************************
    if (item.done == oldItem.done &&
            //item.description == oldItem.description)
@@ -36,7 +40,7 @@ bool TasksList::setItemAt(int index, const TaskItem &item)
                 item.date == oldItem.date)
        return false;
 
-   mItems[index] = item;
+   mCurrentItems[index] = item;
    return true;
 }
 
@@ -49,11 +53,11 @@ void TasksList::appendItem()
     item.done = false;
     item.date = QDate::currentDate(); //********
 
-    mItems.append(item);
+    mCurrentItems.append(item);
 
     //debug
     qDebug() << "***** list vector inside TasksList module *****";
-    for (const auto &elem: mItems)
+    for (const auto &elem: mCurrentItems)
         qDebug() << "done: " << elem.done << ", descr: " << elem.description <<
                     ", date: " << elem.date;
     qDebug() << "***** end TasksList module *****";
@@ -65,13 +69,13 @@ void TasksList::appendItem()
 
 void TasksList::removeCompletedItems()
 {
-    for (int i{}; i < mItems.size(); )
+    for (int i{}; i < mCurrentItems.size(); )
     {
-        if (mItems.at(i).done)
+        if (mCurrentItems.at(i).done)
         {
         emit on_preItemRemoved(i);
 
-        mItems.remove(i);
+        mCurrentItems.remove(i);
 
         emit on_postItemRemoved();
         }
@@ -102,7 +106,9 @@ void TasksList::writeDataToSQLiteBase()
             sqlite3_free(err);
         }
 
-    for (const auto &elem : mItems)
+    updateFullDataItems();
+    //for (const auto &elem : mCurrentItems)
+    for (const auto &elem : mFullDataItems)
     {
         //debug
         qDebug() << elem.date;
@@ -125,21 +131,18 @@ void TasksList::writeDataToSQLiteBase()
 
 }
 
-void TasksList::updateDataFromSQLiteBase()
+void TasksList::getDataFromDB()
 {
 
-    const QString SQL_QUERY_CREATE =
-            "CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' INTEGER, \'task\' TEXT, \'date\' TEXT);";
-
+    const QString SQL_QUERY_CREATE {
+            "CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' INTEGER, \'task\' TEXT, \'date\' TEXT);" };
 
     const QString SQL_QUERY_SELECT { "SELECT * FROM ORGANIZER;" };
-
-    const QString SQL_QUERY_DROP { "DROP TABLE IF EXISTS ORGANIZER" };
 
     sqlite3 *db { nullptr };
     char *err { nullptr };
 
-    mItems.clear();
+    mFullDataItems.clear();
     TaskItem newItem;
 
     if(sqlite3_open("my_cosy_database.dblite", &db) == SQLITE_OK)
@@ -152,29 +155,11 @@ void TasksList::updateDataFromSQLiteBase()
             while (sqlite3_step(stmt) != SQLITE_DONE) {
 
                 newItem.done = sqlite3_column_int(stmt, 0);
-                //newItem.description = QString(sqlite3_column_text(stmt, 1));
-                qDebug() << newItem.done;
                 newItem.description = QString((const char*)sqlite3_column_text(stmt, 1));
-                qDebug() << newItem.description;
-                //newItem.date = QDate::fromString(QString(sqlite3_column_text(stmt,2), "yyyy-MM-dd"));
-                //newItem.date = QDate::fromString(QString((const char*)sqlite3_column_text(stmt,2), "yyyy-MM-dd"));
-                const unsigned char * dateC = sqlite3_column_text(stmt,2);
-                //std::printf("printf date: %s\n", sqlite3_column_text(stmt,2));
-                std::printf("printf date: %s\n", dateC);
-                QString qstr = QString((const char*)dateC);
-                qDebug() << "qstr is: " << qstr;
-                //newItem.date = QDate::fromString(qstr, Qt::DateFormat("yyyy-MM-dd"));
-                //
-               // newItem.date = QDate::fromString(qstr, "yyyy-MM-dd");
-                //
                 newItem.date = QDate::fromString(QString((const char*)sqlite3_column_text(stmt,2)),
                                                  "yyyy-MM-dd");
-                //
-                //newItem.date = QDate::fromString(QString((const char*)sqlite3_column_text(stmt,2)));
-//                newItem.date = QDate::currentDate();
-                qDebug() << newItem.date;
 
-                mItems.append(newItem);
+                mFullDataItems.append(newItem);
             }
             sqlite3_close(db);
             return;
@@ -189,6 +174,35 @@ void TasksList::updateDataFromSQLiteBase()
     newItem.description.clear();
     newItem.date = QDate::currentDate();
 
-    mItems.append(newItem);
+    mFullDataItems.append(newItem);
+}
+
+void TasksList::updateFullDataItems()
+{
+   for (const auto &elemCurrent : mCurrentItems)
+       for (const auto &elemFull : mFullDataItems)
+       {
+          if (elemCurrent == elemFull)
+//              continue;
+              break;
+
+          qDebug() << "----Adding:------";
+          qDebug() << elemCurrent.done << ", " << elemCurrent.description <<
+                    ", " << elemCurrent.date;
+          qDebug() << "---------------";
+          mFullDataItems.append(elemCurrent);
+       }
+}
+
+//void TasksList::updateCurrentItems(QDate &date)
+void TasksList::updateCurrentItems(QDate date)
+{
+    mCurrentItems.clear();
+
+    for (const auto &elem : mFullDataItems)
+    {
+        if (elem.date == date)
+            mCurrentItems.append(elem);
+    }
 
 }

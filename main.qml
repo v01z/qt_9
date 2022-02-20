@@ -23,7 +23,8 @@ Window {
 //                listView.model.list.funcToUpdateModelFromSQLite(DateTime(calendar.selected))
 
                 //******
-                listView.model.list.updateDataFromSQLiteBase()
+                //listView.model.list.updateDataFromSQLiteBase()
+                listView.model.list.updateCurrentItems(calendar.selectedDate)
                 listView.model.list = tasksList //update data in here
                 //*****
 
