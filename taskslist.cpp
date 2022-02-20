@@ -71,19 +71,37 @@ void TasksList::appendItem()
 
 void TasksList::removeCompletedItems()
 {
+    debug_debug(mCurrentItems, false);
+    debug_debug(mFullDataItems, true);
+
     for (int i{}; i < mCurrentItems.size(); )
     {
         if (mCurrentItems.at(i).done)
         {
-        emit on_preItemRemoved(i);
+            emit on_preItemRemoved(i);
 
-        mCurrentItems.remove(i);
+            for (int j{}; j < mFullDataItems.size(); ++j)
+            {
+                if ((mCurrentItems.at(i).description ==
+                      mFullDataItems.at(j).description) &&
+                        (mCurrentItems.at(i).date == mFullDataItems.at(j).date))
+                {
+                    qDebug() << "match";
+                    mFullDataItems.remove(j);
+                    break;
+                }
+            }
 
-        emit on_postItemRemoved();
+            mCurrentItems.remove(i);
+
+            emit on_postItemRemoved();
         }
         else
             ++i;
     }
+
+    debug_debug(mCurrentItems, false);
+    debug_debug(mFullDataItems, true);
 }
 
 void TasksList::writeDataToSQLiteBase()
@@ -118,7 +136,7 @@ void TasksList::writeDataToSQLiteBase()
     }
 
     updateFullDataItems();
-    //for (const auto &elem : mCurrentItems)
+
     for (const auto &elem : mFullDataItems)
     {
         if (elem.description.isEmpty() || !elem.date.isValid())
@@ -140,7 +158,7 @@ void TasksList::writeDataToSQLiteBase()
             sqlite3_free(err);
         }
     }
-    // закрываем соединение
+
     sqlite3_close(db);
 
 
@@ -155,7 +173,7 @@ void TasksList::getDataFromDB()
     const QString SQL_QUERY_SELECT { "SELECT * FROM ORGANIZER;" };
 
     sqlite3 *db { nullptr };
-    char *err { nullptr };
+    //char *err { nullptr };
 
     mFullDataItems.clear();
     TaskItem newItem;
@@ -196,6 +214,9 @@ void TasksList::updateFullDataItems()
 {
     std::set <TaskItem> taskItemSet;
 
+    for (const auto &elem : mCurrentItems)
+        qDebug() << "current: " << elem.description;
+
     for (const auto &elem: mCurrentItems)
         taskItemSet.insert(elem);
 
@@ -223,4 +244,16 @@ void TasksList::updateCurrentItems(QDate date)
             mCurrentItems.append(elem);
     }
 
+}
+
+void TasksList::debug_debug(const QVector<TaskItem> &vec, bool isGlobal)
+{
+    qDebug() << "++ " << (isGlobal? "fullGlobalVec":"currentVec");
+    qDebug() << "********begin******";
+   for (const auto &elem :vec)
+   {
+      qDebug() << "done: " << elem.done << ", descr: " << elem.description <<
+                ", date: " << elem.date;
+   }
+    qDebug() << "********end******";
 }

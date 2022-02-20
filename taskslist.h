@@ -64,6 +64,8 @@ private:
     void getDataFromDB();
     void updateFullDataItems();
 
+    void debug_debug(const QVector<TaskItem>&, bool);
+
 
 };
 
