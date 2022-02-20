@@ -13,10 +13,9 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    //change to smth like URL-mode
-    qmlRegisterType<TasksModel>("Tasks", 1, 0, "TasksModel");
+    qmlRegisterType<TasksModel>("ru.geekbrains", 1, 0, "TasksModel");
 
-    qmlRegisterUncreatableType<TasksList>("Tasks", 1, 0, "TasksList",
+    qmlRegisterUncreatableType<TasksList>("ru.geekbrains", 1, 0, "TasksList",
         QStringLiteral("TasksList should not be created in QML"));
 
     TasksList tasksList;
@@ -38,6 +37,7 @@ int main(int argc, char *argv[])
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
+
     engine.load(url);
 
     return app.exec();

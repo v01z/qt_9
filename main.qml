@@ -3,11 +3,10 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 import QtQuick.Window 2.12
 import QtQuick.Controls 1.4 //for calendar
-
-import Tasks 1.0
+import ru.geekbrains 1.0
 
 Window {
-    width: calendar.width + frameList.width + 30 //30 - всякие там margins
+    width: calendar.width + frameList.width + 30
     height: calendar.height + frameButtons.height + buttonClose.height + 30
     visible: true
     title: qsTr("qt_9")
@@ -20,13 +19,8 @@ Window {
             onClicked: {
                 labelDate.text = Qt.formatDate(calendar.selectedDate, "dd.MM.yyyy")
 
-//                listView.model.list.funcToUpdateModelFromSQLite(DateTime(calendar.selected))
-
-                //******
-                //listView.model.list.updateDataFromSQLiteBase()
                 listView.model.list.updateCurrentItems(calendar.selectedDate)
-                listView.model.list = tasksList //update data in here
-                //*****
+                listView.model.list = tasksList
 
             }
         }
@@ -47,17 +41,15 @@ Window {
 
             ListView{
                 id: listView
-                implicitWidth: 170
+                implicitWidth: 270
                 implicitHeight: 200
                 clip: true
 
-//                model: tasksModel
                 model: TasksModel {
                     list: tasksList
                 }
 
                 delegate: RowLayout{
-//                    width: parent.width
                     width: listView.width
 
                     CheckBox{
@@ -69,7 +61,6 @@ Window {
                         text: model.description
                         onEditingFinished: model.description = text
                         Layout.fillWidth: true
-                        //on
                     }
                     TextField{
                         id: textFieldDate
@@ -88,13 +79,11 @@ Window {
 
                 Button{
                     id: btnAdd
-                    //text: qsTr("Add new task")
                     text: qsTr("Добавить задание")
-                    onClicked: tasksList.appendItem()
+                    onClicked: tasksList.appendItem(calendar.selectedDate)
                 }
                 Button {
                     id: btnRemove
-                    //text: qsTr("Remove completed tasks")
                     text: qsTr("Удалить выполненные задания")
                     onClicked: tasksList.removeCompletedItems()
                 }
@@ -107,7 +96,6 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Покинуть это гостеприимное место")
             onClicked: {
-//                listView.textField.accepted()
                 listView.model.list.writeDataToSQLiteBase()
                 close()
             }

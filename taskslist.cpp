@@ -1,23 +1,11 @@
 #include "taskslist.h"
-#include <QDebug>
 #include <sqlite3.h>
-//#include "/usr/include/sqlite3.h"
-//#include <sqlite3ext.h>
 #include <QGuiApplication>
 #include <set>
-//#include <QSet>
 
 
 TasksList::TasksList(QObject *parent) : QObject(parent)
 {
-    //**********
-    /*
-    mCurrentItems.append( { true, QStringLiteral("Wash the car"), QDate::currentDate() });
-    mCurrentItems.append( { false, QStringLiteral("Fix the sink"), QDate::currentDate() });
-    */
-    //select * where date ==  currentDate
-
-//    updateDataFromSQLiteBase();
     getDataFromDB();
 
     QDate date { QDate::currentDate() };
@@ -31,39 +19,31 @@ QVector<TaskItem> TasksList::items() const
 
 bool TasksList::setItemAt(int index, const TaskItem &item)
 {
-   if (index < 0 || index >= mCurrentItems.size())
-       return false;
+    if (index < 0 || index >= mCurrentItems.size())
+        return false;
 
-   const TaskItem &oldItem = mCurrentItems.at(index);
-   //if (item.done == oldItem.done && //*************************
-   if (item.done == oldItem.done &&
-           //item.description == oldItem.description)
-           item.description == oldItem.description &&
-                item.date == oldItem.date)
-       return false;
+    const TaskItem &oldItem = mCurrentItems.at(index);
 
-   mCurrentItems[index] = item;
-   return true;
+    if (item == oldItem)
+        return false;
+
+    mCurrentItems[index] = item;
+    return true;
 }
 
-void TasksList::appendItem()
+void TasksList::appendItem(QDate date)
 {
+
     emit on_preItemAppended();
+
+    updateFullDataItems();
 
     TaskItem item;
 
     item.done = false;
-    item.date = QDate::currentDate(); //********
+    item.date = date;
 
     mCurrentItems.append(item);
-
-    //debug
-    qDebug() << "***** list vector inside TasksList module *****";
-    for (const auto &elem: mCurrentItems)
-        qDebug() << "done: " << elem.done << ", descr: " << elem.description <<
-                    ", date: " << elem.date;
-    qDebug() << "***** end TasksList module *****";
-    //end debug
 
     emit on_postItemAppended();
 
@@ -71,9 +51,6 @@ void TasksList::appendItem()
 
 void TasksList::removeCompletedItems()
 {
-    debug_debug(mCurrentItems, false);
-    debug_debug(mFullDataItems, true);
-
     for (int i{}; i < mCurrentItems.size(); )
     {
         if (mCurrentItems.at(i).done)
@@ -86,7 +63,6 @@ void TasksList::removeCompletedItems()
                       mFullDataItems.at(j).description) &&
                         (mCurrentItems.at(i).date == mFullDataItems.at(j).date))
                 {
-                    qDebug() << "match";
                     mFullDataItems.remove(j);
                     break;
                 }
@@ -100,8 +76,6 @@ void TasksList::removeCompletedItems()
             ++i;
     }
 
-    debug_debug(mCurrentItems, false);
-    debug_debug(mFullDataItems, true);
 }
 
 void TasksList::writeDataToSQLiteBase()
@@ -117,7 +91,7 @@ void TasksList::writeDataToSQLiteBase()
     sqlite3 *db { nullptr };
     char *err { nullptr };
 
-    if( sqlite3_open("my_cosy_database.dblite", &db) != SQLITE_OK)
+    if( sqlite3_open("database.dblite", &db) != SQLITE_OK)
     {
         std::fprintf(stderr, "Ошибка открытия/создания БД: %s\n", sqlite3_errmsg(db));
         return;
@@ -142,15 +116,8 @@ void TasksList::writeDataToSQLiteBase()
         if (elem.description.isEmpty() || !elem.date.isValid())
             continue;
 
-        //debug
-        qDebug() << elem.date;
-        //end debug
-
-
         QString SQL_QUERY_STR { SQL_QUERY_INSERT_TEMPLATE + (elem.done?'1':'0') + ", \'" +
                     elem.description + "\', \'" + (elem.date).toString("yyyy-MM-dd") + "\');" };
-
-        qDebug() << SQL_QUERY_STR;
 
         if (sqlite3_exec(db, SQL_QUERY_STR.toStdString().c_str(), 0, 0, &err) != SQLITE_OK)
         {
@@ -160,8 +127,6 @@ void TasksList::writeDataToSQLiteBase()
     }
 
     sqlite3_close(db);
-
-
 }
 
 void TasksList::getDataFromDB()
@@ -173,12 +138,11 @@ void TasksList::getDataFromDB()
     const QString SQL_QUERY_SELECT { "SELECT * FROM ORGANIZER;" };
 
     sqlite3 *db { nullptr };
-    //char *err { nullptr };
 
     mFullDataItems.clear();
     TaskItem newItem;
 
-    if(sqlite3_open("my_cosy_database.dblite", &db) == SQLITE_OK)
+    if(sqlite3_open("database.dblite", &db) == SQLITE_OK)
     {
 
         sqlite3_stmt *stmt { nullptr };
@@ -197,12 +161,8 @@ void TasksList::getDataFromDB()
             sqlite3_close(db);
             return;
         }
-        else {
-            qDebug() << "Table doesnt exists, skip this step";
-        }
     }
-    else {
-    }
+
     newItem.done = false;
     newItem.description.clear();
     newItem.date = QDate::currentDate();
@@ -213,9 +173,6 @@ void TasksList::getDataFromDB()
 void TasksList::updateFullDataItems()
 {
     std::set <TaskItem> taskItemSet;
-
-    for (const auto &elem : mCurrentItems)
-        qDebug() << "current: " << elem.description;
 
     for (const auto &elem: mCurrentItems)
         taskItemSet.insert(elem);
@@ -235,8 +192,8 @@ void TasksList::updateFullDataItems()
 //void TasksList::updateCurrentItems(QDate &date)
 void TasksList::updateCurrentItems(QDate date)
 {
-    qDebug() << date;
-    //updateFullDataItems before
+    updateFullDataItems();
+
     mCurrentItems.clear();
 
     for (const auto &elem : mFullDataItems)
@@ -247,6 +204,7 @@ void TasksList::updateCurrentItems(QDate date)
 
 }
 
+/*
 void TasksList::debug_debug(const QVector<TaskItem> &vec, bool isGlobal)
 {
     qDebug() << "++ " << (isGlobal? "fullGlobalVec":"currentVec");
@@ -258,3 +216,4 @@ void TasksList::debug_debug(const QVector<TaskItem> &vec, bool isGlobal)
    }
     qDebug() << "********end******";
 }
+*/

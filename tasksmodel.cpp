@@ -1,6 +1,5 @@
 #include "tasksmodel.h"
 #include "taskslist.h"
-#include <QDebug>
 
 TasksModel::TasksModel(QObject *parent)
     : QAbstractListModel { parent },
@@ -11,11 +10,8 @@ TasksModel::TasksModel(QObject *parent)
 
 int TasksModel::rowCount(const QModelIndex &parent) const
 {
-    // For list models only the root node (an invalid parent) should return the list's size. For all
-    // other (valid) parents, rowCount() should return 0 so that it does not become a tree model.
     if (parent.isValid() || !mList)
         return 0;
-
 
     return mList->items().size();
 }
@@ -94,8 +90,6 @@ void TasksModel::setList(TasksList *list)
 
     if (mList)
         mList->disconnect(this);
-
-    //delete mList;
 
     mList = list;
 
