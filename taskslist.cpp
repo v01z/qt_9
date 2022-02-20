@@ -235,6 +235,7 @@ void TasksList::updateFullDataItems()
 //void TasksList::updateCurrentItems(QDate &date)
 void TasksList::updateCurrentItems(QDate date)
 {
+    qDebug() << date;
     //updateFullDataItems before
     mCurrentItems.clear();
 
