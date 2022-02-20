@@ -16,6 +16,14 @@ struct TaskItem{
        return std::tie(other.done, other.description, other.date) ==
                std::tie(done, description, date);
     }
+
+    bool operator < (const TaskItem &other) const
+    {
+       return std::tie(other.done, other.description, other.date) <
+               std::tie(done, description, date);
+    }
+
+
 };
 
 class TasksList : public QObject

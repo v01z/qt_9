@@ -4,6 +4,8 @@
 //#include "/usr/include/sqlite3.h"
 //#include <sqlite3ext.h>
 #include <QGuiApplication>
+#include <set>
+//#include <QSet>
 
 
 TasksList::TasksList(QObject *parent) : QObject(parent)
@@ -86,8 +88,11 @@ void TasksList::removeCompletedItems()
 
 void TasksList::writeDataToSQLiteBase()
 {
-    const QString SQL_QUERY_CREATE =
-            "CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' INTEGER, \'task\' TEXT, \'date\' TEXT);";
+
+    const QString SQL_QUERY_DROP { "DROP TABLE IF EXISTS ORGANIZER;" };
+
+    const QString SQL_QUERY_CREATE {
+            "CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' INTEGER, \'task\' TEXT, \'date\' TEXT);" };
 
     const QString SQL_QUERY_INSERT_TEMPLATE { "INSERT INTO ORGANIZER VALUES (" };
 
@@ -100,22 +105,32 @@ void TasksList::writeDataToSQLiteBase()
         return;
     }
 
+    if (sqlite3_exec(db, SQL_QUERY_DROP.toStdString().c_str(), 0, 0, &err) != SQLITE_OK)
+    {
+        std::fprintf(stderr, "Ошибка SQL: %sn", err);
+        sqlite3_free(err);
+    }
+
     if (sqlite3_exec(db, SQL_QUERY_CREATE.toStdString().c_str(), 0, 0, &err) != SQLITE_OK)
-        {
-            std::fprintf(stderr, "Ошибка SQL: %sn", err);
-            sqlite3_free(err);
-        }
+    {
+        std::fprintf(stderr, "Ошибка SQL: %sn", err);
+        sqlite3_free(err);
+    }
 
     updateFullDataItems();
     //for (const auto &elem : mCurrentItems)
     for (const auto &elem : mFullDataItems)
     {
+        if (elem.description.isEmpty() || !elem.date.isValid())
+            continue;
+
         //debug
         qDebug() << elem.date;
         //end debug
 
+
         QString SQL_QUERY_STR { SQL_QUERY_INSERT_TEMPLATE + (elem.done?'1':'0') + ", \'" +
-            elem.description + "\', \'" + (elem.date).toString("yyyy-MM-dd") + "\');" };
+                    elem.description + "\', \'" + (elem.date).toString("yyyy-MM-dd") + "\');" };
 
         qDebug() << SQL_QUERY_STR;
 
@@ -179,24 +194,27 @@ void TasksList::getDataFromDB()
 
 void TasksList::updateFullDataItems()
 {
-   for (const auto &elemCurrent : mCurrentItems)
-       for (const auto &elemFull : mFullDataItems)
-       {
-          if (elemCurrent == elemFull)
-//              continue;
-              break;
+    std::set <TaskItem> taskItemSet;
 
-          qDebug() << "----Adding:------";
-          qDebug() << elemCurrent.done << ", " << elemCurrent.description <<
-                    ", " << elemCurrent.date;
-          qDebug() << "---------------";
-          mFullDataItems.append(elemCurrent);
-       }
+    for (const auto &elem: mCurrentItems)
+        taskItemSet.insert(elem);
+
+    for (const auto &elem: mFullDataItems)
+        taskItemSet.insert(elem);
+
+    mFullDataItems.clear();
+
+    for (const auto &elem : taskItemSet)
+    {
+        if (!elem.description.isEmpty())
+            mFullDataItems.append(elem);
+    }
 }
 
 //void TasksList::updateCurrentItems(QDate &date)
 void TasksList::updateCurrentItems(QDate date)
 {
+    //updateFullDataItems before
     mCurrentItems.clear();
 
     for (const auto &elem : mFullDataItems)
