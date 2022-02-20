@@ -27,12 +27,13 @@ QVariant TasksModel::data(const QModelIndex &index, int role) const
 
     const TaskItem item { mList->items().at(index.row()) };
     switch (role){
-        case DoneRole:
-            return QVariant(item.done);
-        case DescriptionRole:
-            return QVariant(item.description);
 
-        //case DateTimeRole:
+    case DoneRole:
+        return QVariant(item.done);
+    case DescriptionRole:
+        return QVariant(item.description);
+    case DateRole:
+        return QVariant(item.date);
     }
 
     return QVariant();
@@ -45,18 +46,20 @@ bool TasksModel::setData(const QModelIndex &index, const QVariant &value, int ro
 
     TaskItem item { mList->items().at(index.row()) };
     switch (role){
-        case DoneRole:
-            item.done = value.toBool();
-            break;
-        case DescriptionRole:
-            item.description = value.toString();
-            break;
-        //case DateTimeRole:
+    case DoneRole:
+        item.done = value.toBool();
+        break;
+    case DescriptionRole:
+        item.description = value.toString();
+        break;
+    case DateRole:
+        item.date = value.toDate();
+        break;
     }
 
     if (mList->setItemAt(index.row(), item)) {
         emit dataChanged(index, index, QVector<int>() << role);
-        return true;
+         return true;
     }
     return false;
 }
@@ -75,6 +78,7 @@ QHash<int, QByteArray> TasksModel::roleNames() const
 
    names[DoneRole] = "done";
    names[DescriptionRole] = "description";
+   names[DateRole] = "date";
 
    return names;
 }

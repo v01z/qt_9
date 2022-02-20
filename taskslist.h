@@ -3,10 +3,12 @@
 
 #include <QObject>
 #include <QVector>
+#include <QDate>
 
 struct TaskItem{
     bool done;
     QString description;
+    QDate date;
 };
 
 class TasksList : public QObject

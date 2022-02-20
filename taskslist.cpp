@@ -6,8 +6,10 @@
 
 TasksList::TasksList(QObject *parent) : QObject(parent)
 {
-    mItems.append( { true, QStringLiteral("Wash the car") });
-    mItems.append( { false, QStringLiteral("Fix the sink") });
+    //**********
+    mItems.append( { true, QStringLiteral("Wash the car"), QDate::currentDate() });
+    mItems.append( { false, QStringLiteral("Fix the sink"), QDate::currentDate() });
+    //select * where date ==  currentDate
 }
 
 QVector<TaskItem> TasksList::items() const
@@ -21,8 +23,11 @@ bool TasksList::setItemAt(int index, const TaskItem &item)
        return false;
 
    const TaskItem &oldItem = mItems.at(index);
+   //if (item.done == oldItem.done && //*************************
    if (item.done == oldItem.done &&
-           item.description == oldItem.description)
+           //item.description == oldItem.description)
+           item.description == oldItem.description &&
+                item.date == oldItem.date)
        return false;
 
    mItems[index] = item;
@@ -34,16 +39,18 @@ void TasksList::appendItem()
     emit on_preItemAppended();
 
     TaskItem item;
+
     item.done = false;
+    item.date = QDate::currentDate(); //********
+
     mItems.append(item);
 
     //debug
-    /*
     qDebug() << "***** list vector inside TasksList module *****";
     for (const auto &elem: mItems)
-        qDebug() << "done: " << elem.done << ", descr: " << elem.description;
+        qDebug() << "done: " << elem.done << ", descr: " << elem.description <<
+                    ", date: " << elem.date;
     qDebug() << "***** end TasksList module *****";
-    */
     //end debug
 
     emit on_postItemAppended();
@@ -70,6 +77,7 @@ void TasksList::removeCompletedItems()
 void TasksList::writeDataToSQLiteBase()
 {
    //
+    /*
     qDebug() << "here";
     //debug
     qDebug() << "***** list vector inside TasksList module *****";
@@ -117,6 +125,7 @@ void TasksList::writeDataToSQLiteBase()
     }
     // закрываем соединение
     sqlite3_close(db);
+    */
 
 
 }
@@ -125,6 +134,7 @@ void TasksList::updateDataFromSQLiteBase()
 {
 
 
+    /*
     const QString SQL_QUERY_CREATE =
             "CREATE TABLE IF NOT EXISTS ORGANIZER (\"done\" BOOL, \"task\" VARCHAR)";
 
@@ -164,7 +174,7 @@ void TasksList::updateDataFromSQLiteBase()
     // закрываем соединение
     sqlite3_close(db);
 
-
+*/
 
 
 
@@ -174,14 +184,15 @@ void TasksList::updateDataFromSQLiteBase()
 
     //debug
    mItems.clear();
-   mItems.append( { false, QStringLiteral("New task number one") });
-   mItems.append( { true, QStringLiteral("New task number two") });
+   mItems.append( { false, QStringLiteral("New task number one"), QDate::currentDate() });
+   mItems.append( { true, QStringLiteral("New task number two"), QDate::currentDate() });
 
    qDebug() << "Should be updated";
    qDebug() << mItems.size();
     for (const auto &elem: mItems)
     {
-        qDebug() << "done: "<< elem.done << " | description: " << elem.description;
+        qDebug() << "done: "<< elem.done << " | description: " << elem.description <<
+                    ", date: " << elem.date;
     }
     //end debug
 }

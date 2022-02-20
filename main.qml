@@ -64,11 +64,16 @@ Window {
                         onClicked: model.done = checked
                     }
                     TextField{
-                        id: textField
+                        id: textFieldDescr
                         text: model.description
                         onEditingFinished: model.description = text
                         Layout.fillWidth: true
                         //on
+                    }
+                    TextField{
+                        id: textFieldDate
+                        text: model.date
+                        visible: false
                     }
                 }
             }

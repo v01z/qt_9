@@ -15,7 +15,8 @@ public:
 
     enum {
         DoneRole = Qt::UserRole,
-        DescriptionRole
+        DescriptionRole,
+        DateRole
     };
 
     // Basic functionality:
