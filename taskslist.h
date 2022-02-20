@@ -44,6 +44,6 @@ private:
 
 };
 
-int callback(void *, int, char **, char **);
+//int callback(void *, int, char **, char **);
 
 #endif // TASKSLIST_H
