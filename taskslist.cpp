@@ -159,6 +159,8 @@ void TasksList::getDataFromDB()
             sqlite3_close(db);
             return;
         }
+        else
+            sqlite3_close(db);
     }
 
     newItem.done = false;
