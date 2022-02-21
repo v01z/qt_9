@@ -3,6 +3,7 @@
 #include <QGuiApplication>
 #include <set>
 
+#define DATABASE_ORGANIZER "database.dblite"
 
 TasksList::TasksList(QObject *parent) : QObject(parent)
 {
@@ -91,7 +92,7 @@ void TasksList::writeDataToSQLiteBase()
     sqlite3 *db { nullptr };
     char *err { nullptr };
 
-    if( sqlite3_open("database.dblite", &db) != SQLITE_OK)
+    if( sqlite3_open(DATABASE_ORGANIZER, &db) != SQLITE_OK)
     {
         std::fprintf(stderr, "Ошибка открытия/создания БД: %s\n", sqlite3_errmsg(db));
         return;
@@ -132,9 +133,6 @@ void TasksList::writeDataToSQLiteBase()
 void TasksList::getDataFromDB()
 {
 
-    const QString SQL_QUERY_CREATE {
-            "CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' INTEGER, \'task\' TEXT, \'date\' TEXT);" };
-
     const QString SQL_QUERY_SELECT { "SELECT * FROM ORGANIZER;" };
 
     sqlite3 *db { nullptr };
@@ -142,7 +140,7 @@ void TasksList::getDataFromDB()
     mFullDataItems.clear();
     TaskItem newItem;
 
-    if(sqlite3_open("database.dblite", &db) == SQLITE_OK)
+    if(sqlite3_open(DATABASE_ORGANIZER, &db) == SQLITE_OK)
     {
 
         sqlite3_stmt *stmt { nullptr };
