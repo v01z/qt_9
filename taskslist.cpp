@@ -155,7 +155,10 @@ void TasksList::getDataFromDB()
                                                  "yyyy-MM-dd");
 
                 mFullDataItems.append(newItem);
+
             }
+
+            sqlite3_finalize(stmt);
             sqlite3_close(db);
             return;
         }
