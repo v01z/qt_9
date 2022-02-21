@@ -21,8 +21,6 @@ struct TaskItem{
        return std::tie(other.done, other.description, other.date) <
                std::tie(done, description, date);
     }
-
-
 };
 
 class TasksList : public QObject
