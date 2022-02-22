@@ -9,13 +9,15 @@ Window {
     width: calendar.width + frameList.width + 30
     height: calendar.height + frameButtons.height + buttonClose.height + 30
     visible: true
-    title: qsTr("qt_9")
+    title: qsTr("Organizer")
     Frame{
         id: frameMain
         anchors.fill: parent
 
         Calendar{
             id: calendar
+//            width: frameList.height
+
             onClicked: {
                 labelDate.text = Qt.formatDate(calendar.selectedDate, "dd.MM.yyyy")
 
@@ -29,15 +31,27 @@ Window {
             anchors.left: calendar.right
             anchors.leftMargin: 10
             anchors.topMargin: 10
-            text: Qt.formatDate(new Date(), "dd.MM.yyyy")
+            text: qsTr("Выбранная дата: ") +
+                  Qt.formatDate(new Date(), "dd.MM.yyyy")
+        }
+
+        Label {
+           id: labelTotalCount
+           anchors.top: labelDate.bottom
+           anchors.left: calendar.right
+           anchors.leftMargin: 10
+           text: qsTr("Всего заданий: ") + tasksList.getTotalTasksCount()
         }
 
         Frame{
             id: frameList
             anchors.left: calendar.right
-            anchors.top: labelDate.bottom
+            anchors.top: labelTotalCount.bottom
             anchors.topMargin: 5
             anchors.leftMargin: 10
+            height: calendar.height - labelDate.height
+                    - labelDate.anchors.topMargin -
+                    labelTotalCount.height
 
             ListView{
                 id: listView
@@ -64,9 +78,14 @@ Window {
                         onAccepted: {
                             if (text.length < 1)
                             {
-                                //text = listView.model.list.getTotalTasksCount()
-                                text = qsTr("Задание номер ") + tasksList.getTotalTasksCount()
+                                text = qsTr("Задание номер ")
+                                        + tasksList.getTotalTasksCount() + 1
                                 textFieldDescr.accepted(true)
+                                //debug
+                                tasksList.setTotalTasksCount(tasksList.getTotalTasksCount() + 1)
+                                labelTotalCount = qsTr("Всего заданий: ")
+                                        + tasksList.getTotalTasksCount()
+                                //end debug
                             }
 
                         }

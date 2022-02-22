@@ -37,7 +37,7 @@ public:
     const int getTotalTasksCount() const;
 
     Q_INVOKABLE
-    void setTotalTasksAmount(int);
+    void setTotalTasksCount(int);
 
 signals:
     void on_preItemAppended();
@@ -58,7 +58,7 @@ private:
     QVector<TaskItem> mFullDataItems;
     QVector<TaskItem> mCurrentItems;
 
-    int totalTasksAmount;
+    int totalTasksCount;
 
     void getDataFromDB();
     void updateFullDataItems();

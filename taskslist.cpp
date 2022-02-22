@@ -8,7 +8,7 @@
 
 TasksList::TasksList(QObject *parent) :
     QObject{ parent },
-    totalTasksAmount{}
+    totalTasksCount{}
 {
     getDataFromDB();
 
@@ -49,24 +49,24 @@ void TasksList::appendItem(QDate date)
 
     //updateFullDataItems(); //лишнее?
 
-//    totalTasksAmount++; we will increase it in qml
+//    totalTasksCount++; we will increase it in qml
 
     TaskItem item;
 
     item.done = false;
     //item.description = tr("Переименуй меня и нажми Enter");
-   // item.description = "Задание номер " + totalTasksAmount;
+   // item.description = "Задание номер " + totalTasksCount;
 
     //mb we should move it to qml
-    //item.description = tr("Задание номер ") + QString::number(totalTasksAmount);
+    //item.description = tr("Задание номер ") + QString::number(totalTasksCount);
     item.date = date;
 
     mCurrentItems.append(item);
 
-//    totalTasksAmount++; //а итем ведь может и не добавиться. need chck in qml?
+//    totalTasksCount++; //а итем ведь может и не добавиться. need chck in qml?
                         //increase this var in qml when textField is not empty
 
-    //assert((totalTasksAmount + 1) == mFullDataItems.size());
+    //assert((totalTasksCount + 1) == mFullDataItems.size());
 
     emit on_postItemAppended();
 
@@ -98,7 +98,7 @@ void TasksList::removeCompletedItems()
 
             mCurrentItems.remove(i);
 
-            totalTasksAmount--;
+            totalTasksCount--;
 
             emit on_postItemRemoved();
         }
@@ -198,7 +198,7 @@ void TasksList::getDataFromDB()
 
             }
 
-            totalTasksAmount = mFullDataItems.size();
+            totalTasksCount = mFullDataItems.size();
 
             sqlite3_finalize(stmt);
             sqlite3_close(db);
@@ -235,17 +235,17 @@ void TasksList::updateFullDataItems()
     }
 
     //одинаковый задания если то выкинет. need check in qml?
-    assert(totalTasksAmount == mFullDataItems.size());
+    assert(totalTasksCount == mFullDataItems.size());
 }
 
 const int TasksList::getTotalTasksCount() const
 {
-    return totalTasksAmount;
+    return totalTasksCount;
 }
 
-void TasksList::setTotalTasksAmount(int newCount)
+void TasksList::setTotalTasksCount(int newCount)
 {
-    totalTasksAmount = newCount;
+    totalTasksCount = newCount;
 }
 
 //void TasksList::updateCurrentItems(QDate &date)
@@ -273,6 +273,6 @@ void TasksList::debug_debug(const QVector<TaskItem> &vec, bool isGlobal)
                 ", date: " << elem.date;
    }
     qDebug() << "vec size is: " << vec.size();
-    qDebug() << "total tasks count is: " << totalTasksAmount;
+    qDebug() << "total tasks count is: " << totalTasksCount;
     qDebug() << "********end******";
 }
