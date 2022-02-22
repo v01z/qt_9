@@ -94,16 +94,16 @@ void TasksList::removeCompletedItems()
             emit on_preItemRemoved(i);
 
             ////
-           /*
             if (mCurrentItems.at(i).description.isEmpty())
             {
                 mCurrentItems.remove(i);
+
+                totalTasksCount--;
 
                 emit on_postItemRemoved();
 
                 return;
             }
-            */
             ////
 
 
@@ -253,7 +253,11 @@ void TasksList::updateFullDataItems()
 
     for (const auto &elem : taskItemSet)
     {
-        if (!elem.description.isEmpty())
+        if (elem.description.isEmpty())
+        {
+            totalTasksCount--;
+            continue;
+        }
             mFullDataItems.append(elem);
     }
 
@@ -269,6 +273,11 @@ const int TasksList::getTotalTasksCount() const
 void TasksList::setTotalTasksCount(int newCount)
 {
     totalTasksCount = newCount;
+}
+
+void TasksList::newTaskIsAccepted(QString descr)
+{
+   //
 }
 
 //void TasksList::updateCurrentItems(QDate &date)

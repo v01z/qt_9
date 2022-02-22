@@ -93,6 +93,27 @@ Window {
                         text: model.description
                         onEditingFinished: model.description = text
                         Layout.fillWidth: true
+                        onAccepted: {
+                            console.log("accepted " + text)
+
+                        }
+                        onTextChanged: {
+                            console.log("text changed to " + text)
+                            }
+                        MouseArea{
+                            anchors.fill: parent
+                            onClicked: {
+                                //we can find index of currentItems using text:
+                                console.log("clicked on " + parent.text)
+
+                                enabled = false //
+//                                console.log(listView.indexAt())
+
+//                                parent.selectAll()
+//                                parent.focus = true
+                            }
+                        }
+
                         /*
                         onAccepted: {
                             tasksList.setTotalTasksCount(tasksList.getTotalTasksCount() + 1)
@@ -134,7 +155,9 @@ Window {
                 }
                 Button {
                     id: btnRemove
-                    text: qsTr("Удалить выполненные задания")
+                    text: qsTr("Удалить отмеченные задания")
+                    ToolTip.visible: hovered
+                    ToolTip.text: qsTr("Удалить выполненные либо ошибочно введённые")
                     onClicked: tasksList.removeCompletedItems()
                 }
             }

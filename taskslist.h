@@ -39,6 +39,9 @@ public:
     Q_INVOKABLE
     void setTotalTasksCount(int);
 
+    Q_INVOKABLE
+    void newTaskIsAccepted(QString);
+
     void debug_debug(const QVector<TaskItem>&, bool);
 
 signals:
