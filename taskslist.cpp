@@ -40,6 +40,8 @@ bool TasksList::setItemAt(int index, const TaskItem &item)
     return true;
 }
 
+//Эта ф-я будет добавлять в mCurrentItems. К ней надо другую, которая
+//будет добавлять просто в listView (без записи); need one more button
 void TasksList::appendItem(QDate date)
 {
 
@@ -56,7 +58,7 @@ void TasksList::appendItem(QDate date)
    // item.description = "Задание номер " + totalTasksAmount;
 
     //mb we should move it to qml
-    item.description = tr("Задание номер ") + QString::number(totalTasksAmount);
+    //item.description = tr("Задание номер ") + QString::number(totalTasksAmount);
     item.date = date;
 
     mCurrentItems.append(item);
