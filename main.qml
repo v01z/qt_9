@@ -100,10 +100,12 @@ Window {
                         onTextChanged: {
                             console.log("text changed to " + text)
                             }
-                        MouseArea{
+                        MouseArea{ //move it to 'onAccepted' in order to use newTaskIsAccepted()
                             anchors.fill: parent
                             onClicked: {
-                                //we can find index of currentItems using text:
+                                //we can find index of currentItems using text.
+                                //and remove or not remove item according text's valid:w
+                                //See new func newTaskIsAccepted()
                                 console.log("clicked on " + parent.text)
 
                                 enabled = false //
