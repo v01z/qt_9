@@ -47,13 +47,15 @@ void TasksList::appendItem(QDate date)
 
     //updateFullDataItems(); //лишнее?
 
-    totalTasksAmount++;
+//    totalTasksAmount++; we will increase it in qml
 
     TaskItem item;
 
     item.done = false;
     //item.description = tr("Переименуй меня и нажми Enter");
    // item.description = "Задание номер " + totalTasksAmount;
+
+    //mb we should move it to qml
     item.description = tr("Задание номер ") + QString::number(totalTasksAmount);
     item.date = date;
 
@@ -236,7 +238,12 @@ void TasksList::updateFullDataItems()
 
 const int TasksList::getTotalTasksCount() const
 {
-   return totalTasksAmount;
+    return totalTasksAmount;
+}
+
+void TasksList::setTotalTasksAmount(int newCount)
+{
+    totalTasksAmount = newCount;
 }
 
 //void TasksList::updateCurrentItems(QDate &date)

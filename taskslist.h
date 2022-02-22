@@ -36,6 +36,9 @@ public:
     Q_INVOKABLE
     const int getTotalTasksCount() const;
 
+    Q_INVOKABLE
+    void setTotalTasksAmount(int);
+
 signals:
     void on_preItemAppended();
     void on_postItemAppended();
