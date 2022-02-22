@@ -39,6 +39,8 @@ public:
     Q_INVOKABLE
     void setTotalTasksCount(int);
 
+    void debug_debug(const QVector<TaskItem>&, bool);
+
 signals:
     void on_preItemAppended();
     void on_postItemAppended();
@@ -64,7 +66,6 @@ private:
     void updateFullDataItems();
 
 
-    void debug_debug(const QVector<TaskItem>&, bool);
 
 };
 

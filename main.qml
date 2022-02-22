@@ -16,10 +16,11 @@ Window {
 
         Calendar{
             id: calendar
-//            width: frameList.height
+            //            width: frameList.height
 
             onClicked: {
-                labelDate.text = Qt.formatDate(calendar.selectedDate, "dd.MM.yyyy")
+                labelDate.text = qsTr("Выбранная дата: ") +
+                        Qt.formatDate(calendar.selectedDate, "dd.MM.yyyy")
 
                 listView.model.list.updateCurrentItems(calendar.selectedDate)
                 listView.model.list = tasksList
@@ -36,12 +37,29 @@ Window {
         }
 
         Label {
-           id: labelTotalCount
-           anchors.top: labelDate.bottom
-           anchors.left: calendar.right
-           anchors.leftMargin: 10
-           text: qsTr("Всего заданий: ") + tasksList.getTotalTasksCount()
+            id: labelTotalCount
+            anchors.top: labelDate.bottom
+            anchors.left: calendar.right
+            anchors.leftMargin: 10
+            text: qsTr("Всего заданий: ") + tasksList.getTotalTasksCount()
         }
+        /*
+        RoundButton {
+            id: btnIncrListViewItems
+            anchors.top: labelDate.bottom
+            anchors.right: parent.right
+            //            anchors.left: labelDate.right
+            //            anchors.left: calendar.right + listView.width
+            //            anchors.leftMargin: 10
+            text: "+"
+            palette {
+                button: "#aaddaa"
+            }
+            //            background: "palegreen"
+            //            color: "palegreen"
+            //width: 10
+        }
+        */
 
         Frame{
             id: frameList
@@ -76,14 +94,15 @@ Window {
                         onEditingFinished: model.description = text
                         Layout.fillWidth: true
                         onAccepted: {
+                            tasksList.setTotalTasksCount(tasksList.getTotalTasksCount() + 1)
                             if (text.length < 1)
                             {
                                 text = qsTr("Задание номер ")
-                                        + tasksList.getTotalTasksCount() + 1
-                                textFieldDescr.accepted(true)
+                                        + tasksList.getTotalTasksCount()
+                                //textFieldDescr.accepted(true)
                                 //debug
-                                tasksList.setTotalTasksCount(tasksList.getTotalTasksCount() + 1)
-                                labelTotalCount = qsTr("Всего заданий: ")
+
+                                labelTotalCount.text = qsTr("Всего заданий: ")
                                         + tasksList.getTotalTasksCount()
                                 //end debug
                             }
@@ -109,7 +128,7 @@ Window {
                 Button{
                     id: btnAdd
                     text: qsTr("Добавить задание")
-                    onClicked: tasksList.appendItem(calendar.selectedDate)
+                    //                    onClicked: tasksList.appendItem(calendar.selectedDate)
                 }
                 Button {
                     id: btnRemove
@@ -128,6 +147,17 @@ Window {
                 listView.model.list.writeDataToSQLiteBase()
                 close()
             }
+        }
+        RoundButton {
+            id: btnIncrListViewItems
+            anchors.top: labelDate.bottom
+            anchors.right: parent.right
+            text: "+"
+            palette {
+                button: "#aaddaa"
+            }
+
+            onClicked: tasksList.appendItem(calendar.selectedDate)
         }
     }
 }
