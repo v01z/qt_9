@@ -128,7 +128,7 @@ Window {
                 Button{
                     id: btnAdd
                     text: qsTr("Добавить задание")
-                    //                    onClicked: tasksList.appendItem(calendar.selectedDate)
+                    onClicked: tasksList.appendItem(calendar.selectedDate)
                 }
                 Button {
                     id: btnRemove
@@ -157,7 +157,7 @@ Window {
                 button: "#aaddaa"
             }
 
-            onClicked: tasksList.appendItem(calendar.selectedDate)
+//            onClicked: tasksList.appendItem(calendar.selectedDate)
         }
     }
 }

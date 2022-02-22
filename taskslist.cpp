@@ -45,6 +45,10 @@ bool TasksList::setItemAt(int index, const TaskItem &item)
 void TasksList::appendItem(QDate date)
 {
 
+    if (mCurrentItems.size() > 0 && mCurrentItems.last().description.isEmpty())
+        return;
+
+
     emit on_preItemAppended();
 
     //updateFullDataItems(); //лишнее?
@@ -55,7 +59,7 @@ void TasksList::appendItem(QDate date)
 
     item.done = false;
     //item.description = tr("Переименуй меня и нажми Enter");
-   // item.description = "Задание номер " + totalTasksCount;
+    //item.description = "Задание номер " + totalTasksCount;
 
     //mb we should move it to qml
     //item.description = tr("Задание номер ") + QString::number(totalTasksCount);
@@ -83,7 +87,23 @@ void TasksList::removeCompletedItems()
     {
         if (mCurrentItems.at(i).done)
         {
+
             emit on_preItemRemoved(i);
+
+            ////
+           /*
+            if (mCurrentItems.at(i).description.isEmpty())
+            {
+                mCurrentItems.remove(i);
+
+                emit on_postItemRemoved();
+
+                return;
+            }
+            */
+            ////
+
+
 
             for (int j{}; j < mFullDataItems.size(); ++j)
             {
