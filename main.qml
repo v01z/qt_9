@@ -93,6 +93,7 @@ Window {
                         text: model.description
                         onEditingFinished: model.description = text
                         Layout.fillWidth: true
+                        /*
                         onAccepted: {
                             tasksList.setTotalTasksCount(tasksList.getTotalTasksCount() + 1)
                             if (text.length < 1)
@@ -108,6 +109,7 @@ Window {
                             }
 
                         }
+                        */
 
                     }
                     TextField{
@@ -148,6 +150,7 @@ Window {
                 close()
             }
         }
+
         RoundButton {
             id: btnIncrListViewItems
             anchors.top: labelDate.bottom

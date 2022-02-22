@@ -45,6 +45,9 @@ bool TasksList::setItemAt(int index, const TaskItem &item)
 void TasksList::appendItem(QDate date)
 {
 
+    if (date < QDate::currentDate())
+        return;
+
     if (mCurrentItems.size() > 0 && mCurrentItems.last().description.isEmpty())
         return;
 
@@ -53,7 +56,7 @@ void TasksList::appendItem(QDate date)
 
     //updateFullDataItems(); //лишнее?
 
-//    totalTasksCount++; we will increase it in qml
+    totalTasksCount++; //we will increase it in qml
 
     TaskItem item;
 
@@ -118,7 +121,7 @@ void TasksList::removeCompletedItems()
 
             mCurrentItems.remove(i);
 
-            totalTasksCount--;
+            totalTasksCount--; //count
 
             emit on_postItemRemoved();
         }
