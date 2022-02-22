@@ -61,6 +61,16 @@ Window {
                         text: model.description
                         onEditingFinished: model.description = text
                         Layout.fillWidth: true
+                        onAccepted: {
+                            if (text.length < 1)
+                            {
+                                //text = listView.model.list.getTotalTasksCount()
+                                text = qsTr("Задание номер ") + tasksList.getTotalTasksCount()
+                                textFieldDescr.accepted(true)
+                            }
+
+                        }
+
                     }
                     TextField{
                         id: textFieldDate
@@ -94,7 +104,7 @@ Window {
             anchors.top: frameButtons.bottom
             anchors.topMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Покинуть это гостеприимное место")
+            text: qsTr("Выход")
             onClicked: {
                 listView.model.list.writeDataToSQLiteBase()
                 close()
