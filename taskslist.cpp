@@ -2,7 +2,7 @@
 #include <sqlite3.h>
 #include <QGuiApplication>
 #include <set>
-#include <QDebug>
+//#include <QDebug>
 
 #define DATABASE_ORGANIZER "database.dblite"
 
@@ -14,10 +14,6 @@ TasksList::TasksList(QObject *parent) :
     QDate date { QDate::currentDate() };
     updateCurrentItems(date);
 
-    //debug
-    debug_debug(mFullDataItems, true);
-    debug_debug(mCurrentItems,false);
-    //end debug
 }
 
 QVector<TaskItem> TasksList::items() const
@@ -39,8 +35,6 @@ bool TasksList::setItemAt(int index, const TaskItem &item)
     return true;
 }
 
-//Эта ф-я будет добавлять в mCurrentItems. К ней надо другую, которая
-//будет добавлять просто в listView (без записи); need one more button
 void TasksList::appendItem(QDate date)
 {
 
@@ -53,33 +47,14 @@ void TasksList::appendItem(QDate date)
 
     emit on_preItemAppended();
 
-    //updateFullDataItems(); //лишнее?
-
-    //totalTasksCount++; //we will increase it in qml
-
     TaskItem item;
 
     item.done = false;
-    //item.description = tr("Переименуй меня и нажми Enter");
-    //item.description = "Задание номер " + totalTasksCount;
-
-    //mb we should move it to qml
-    //item.description = tr("Задание номер ") + QString::number(totalTasksCount);
     item.date = date;
 
     mCurrentItems.append(item);
 
-//    totalTasksCount++; //а итем ведь может и не добавиться. need chck in qml?
-                        //increase this var in qml when textField is not empty
-
-    //assert((totalTasksCount + 1) == mFullDataItems.size());
-
     emit on_postItemAppended();
-
-    ///debug
-    debug_debug(mFullDataItems, true);
-    debug_debug(mCurrentItems,false);
-    //end debug
 
 }
 
@@ -92,21 +67,14 @@ void TasksList::removeCompletedItems()
 
             emit on_preItemRemoved(i);
 
-            ////
             if (mCurrentItems.at(i).description.isEmpty())
             {
                 mCurrentItems.remove(i);
-
-                //totalTasksCount--;
-                //decreaseTotalTasksCount();
 
                 emit on_postItemRemoved();
 
                 return;
             }
-            ////
-
-
 
             for (int j{}; j < mFullDataItems.size(); ++j)
             {
@@ -121,19 +89,11 @@ void TasksList::removeCompletedItems()
 
             mCurrentItems.remove(i);
 
-//            totalTasksCount--; //count
-//            decreaseTotalTasksCount();
-
             emit on_postItemRemoved();
         }
         else
             ++i;
     }
-
-///debug
-    debug_debug(mFullDataItems, true);
-    debug_debug(mCurrentItems,false);
-    //end debug
 
 }
 
@@ -187,11 +147,6 @@ void TasksList::writeDataToSQLiteBase()
 
     sqlite3_close(db);
 
-    ///debug
-    debug_debug(mFullDataItems, true);
-    debug_debug(mCurrentItems,false);
-    //end debug
-
 }
 
 void TasksList::getDataFromDB()
@@ -221,8 +176,6 @@ void TasksList::getDataFromDB()
                 mFullDataItems.append(newItem);
 
             }
-
-            //totalTasksCount = mFullDataItems.size();
 
             sqlite3_finalize(stmt);
             sqlite3_close(db);
@@ -257,56 +210,18 @@ void TasksList::updateFullDataItems()
     {
         if (elem.description.isEmpty())
         {
-            //totalTasksCount--;
             continue;
         }
             mFullDataItems.append(elem);
     }
-
-    //одинаковый задания если то выкинет. need check in qml?
-    //assert(totalTasksCount == mFullDataItems.size());
 }
 
-//const int TasksList::getTotalTasksCount()
 int TasksList::getTotalTasksCount()
 {
     updateFullDataItems();
     return mFullDataItems.size();
-//    return totalTasksCount;
 }
 
-/*
-void TasksList::setTotalTasksCount(int newCount)
-{
-    totalTasksCount = newCount;
-}
-*/
-
-/*
-void TasksList::increaseTotalTasksCount()
-{
-   totalTasksCount++;
-   qDebug() << totalTasksCount;
-}
-
-void TasksList::decreaseTotalTasksCount()
-{
-   if (totalTasksCount <= 0)
-       totalTasksCount = 0;
-   else
-       totalTasksCount--;
-
-   qDebug() << totalTasksCount;
-
-}
-
-void TasksList::newTaskIsAccepted(QString descr)
-{
-  //
-}
-*/
-
-//void TasksList::updateCurrentItems(QDate &date)
 void TasksList::updateCurrentItems(QDate date)
 {
     updateFullDataItems();
@@ -321,6 +236,7 @@ void TasksList::updateCurrentItems(QDate date)
 
 }
 
+/*
 void TasksList::debug_debug(const QVector<TaskItem> &vec, bool isGlobal)
 {
     qDebug() << "++ " << (isGlobal? "fullGlobalVec":"currentVec");
@@ -331,6 +247,6 @@ void TasksList::debug_debug(const QVector<TaskItem> &vec, bool isGlobal)
                 ", date: " << elem.date;
    }
     qDebug() << "vec size is: " << vec.size();
-    //qDebug() << "total tasks count is: " << totalTasksCount;
     qDebug() << "********end******";
 }
+*/

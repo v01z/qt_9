@@ -25,12 +25,6 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty(QStringLiteral("tasksList"),
         &tasksList);
 
-    /*
-    TasksModel tasksModel;
-    tasksModel.setList(&tasksList);
-    engine.rootContext()->setContextProperty(QStringLiteral("tasksModel"), &tasksModel);
-    */
-
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {

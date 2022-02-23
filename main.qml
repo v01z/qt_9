@@ -16,8 +16,6 @@ Window {
 
         Calendar{
             id: calendar
-            //            width: frameList.height
-
             onClicked: {
                 labelDate.text = qsTr("Выбранная дата: ") +
                         Qt.formatDate(calendar.selectedDate, "dd.MM.yyyy")
@@ -44,24 +42,6 @@ Window {
             anchors.leftMargin: 10
             text: qsTr("Всего заданий: ") + tasksList.getTotalTasksCount()
         }
-        /*
-        RoundButton {
-            id: btnIncrListViewItems
-            anchors.top: labelDate.bottom
-            anchors.right: parent.right
-            //            anchors.left: labelDate.right
-            //            anchors.left: calendar.right + listView.width
-            //            anchors.leftMargin: 10
-            text: "+"
-            palette {
-                button: "#aaddaa"
-            }
-            //            background: "palegreen"
-            //            color: "palegreen"
-            //width: 10
-        }
-        */
-
         Frame{
             id: frameList
             anchors.left: calendar.right
@@ -95,55 +75,15 @@ Window {
                         onEditingFinished: model.description = text
                         Layout.fillWidth: true
                         onAccepted: {
-                            console.log("accepted " + text)
-                            tasksList.increaseTotalTasksCount()
-                            /*
-                            tasksList.setTotalTasksCount(
-                                        tasksList.getTotalTasksCount() + 1)
-                                        */
                             labelTotalCount.text = qsTr("Всего заданий: ")
-                                  + tasksList.getTotalTasksCount()
+                                    + tasksList.getTotalTasksCount()
 
                         }
+                        /*
                         onTextChanged: {
                             console.log("text changed to " + text)
-                            }
-                        /*
-                        MouseArea{ //move it to 'onAccepted' in order to use newTaskIsAccepted()
-                            anchors.fill: parent
-                            onClicked: {
-                                //we can find index of currentItems using text.
-                                //and remove or not remove item according text's valid:w
-                                //See new func newTaskIsAccepted()
-                                console.log("clicked on " + parent.text)
-
-                                enabled = false //
-//                                console.log(listView.indexAt())
-
-//                                parent.selectAll()
-//                                parent.focus = true
-                            }
                         }
                         */
-
-                        /*
-                        onAccepted: {
-                            tasksList.setTotalTasksCount(tasksList.getTotalTasksCount() + 1)
-                            if (text.length < 1)
-                            {
-                                text = qsTr("Задание номер ")
-                                        + tasksList.getTotalTasksCount()
-                                //textFieldDescr.accepted(true)
-                                //debug
-
-                                labelTotalCount.text = qsTr("Всего заданий: ")
-                                        + tasksList.getTotalTasksCount()
-                                //end debug
-                            }
-
-                        }
-                        */
-
                     }
                     TextField{
                         id: textFieldDate
@@ -178,7 +118,7 @@ Window {
                     onClicked:  {
                         tasksList.removeCompletedItems()
                         labelTotalCount.text = qsTr("Всего заданий: ")
-                                  + tasksList.getTotalTasksCount()
+                                + tasksList.getTotalTasksCount()
                     }
 
                 }
@@ -196,6 +136,7 @@ Window {
             }
         }
 
+        /*
         RoundButton {
             id: btnIncrListViewItems
             anchors.top: labelDate.bottom
@@ -205,7 +146,7 @@ Window {
                 button: "#aaddaa"
             }
 
-//            onClicked: tasksList.appendItem(calendar.selectedDate)
         }
+        */
     }
 }

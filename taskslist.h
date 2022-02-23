@@ -36,23 +36,7 @@ public:
     Q_INVOKABLE
     int getTotalTasksCount();
 
-    /*
-    Q_INVOKABLE
-    void setTotalTasksCount(int);
-    */
-
-    /*
-    Q_INVOKABLE
-    void increaseTotalTasksCount();
-
-    Q_INVOKABLE
-    void decreaseTotalTasksCount();
-
-    Q_INVOKABLE
-    void newTaskIsAccepted(QString);
-    */
-
-    void debug_debug(const QVector<TaskItem>&, bool);
+    //void debug_debug(const QVector<TaskItem>&, bool);
 
 signals:
     void on_preItemAppended();
@@ -72,8 +56,6 @@ public slots:
 private:
     QVector<TaskItem> mFullDataItems;
     QVector<TaskItem> mCurrentItems;
-
-    //int totalTasksCount;
 
     void getDataFromDB();
     void updateFullDataItems();
