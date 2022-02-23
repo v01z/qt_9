@@ -24,7 +24,8 @@ Window {
 
                 listView.model.list.updateCurrentItems(calendar.selectedDate)
                 listView.model.list = tasksList
-
+                labelTotalCount.text = qsTr("Всего заданий: ")
+                        + tasksList.getTotalTasksCount()
             }
         }
         Label {
@@ -95,11 +96,19 @@ Window {
                         Layout.fillWidth: true
                         onAccepted: {
                             console.log("accepted " + text)
+                            tasksList.increaseTotalTasksCount()
+                            /*
+                            tasksList.setTotalTasksCount(
+                                        tasksList.getTotalTasksCount() + 1)
+                                        */
+                            labelTotalCount.text = qsTr("Всего заданий: ")
+                                  + tasksList.getTotalTasksCount()
 
                         }
                         onTextChanged: {
                             console.log("text changed to " + text)
                             }
+                        /*
                         MouseArea{ //move it to 'onAccepted' in order to use newTaskIsAccepted()
                             anchors.fill: parent
                             onClicked: {
@@ -115,6 +124,7 @@ Window {
 //                                parent.focus = true
                             }
                         }
+                        */
 
                         /*
                         onAccepted: {
@@ -153,14 +163,24 @@ Window {
                 Button{
                     id: btnAdd
                     text: qsTr("Добавить задание")
-                    onClicked: tasksList.appendItem(calendar.selectedDate)
+                    onClicked: {
+                        tasksList.appendItem(calendar.selectedDate)
+                        labelTotalCount.text =  qsTr("Всего заданий: ")
+                                + tasksList.getTotalTasksCount() + " + 1"
+                    }
+
                 }
                 Button {
                     id: btnRemove
                     text: qsTr("Удалить отмеченные задания")
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Удалить выполненные либо ошибочно введённые")
-                    onClicked: tasksList.removeCompletedItems()
+                    onClicked:  {
+                        tasksList.removeCompletedItems()
+                        labelTotalCount.text = qsTr("Всего заданий: ")
+                                  + tasksList.getTotalTasksCount()
+                    }
+
                 }
             }
         }

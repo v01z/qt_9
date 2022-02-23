@@ -7,8 +7,7 @@
 #define DATABASE_ORGANIZER "database.dblite"
 
 TasksList::TasksList(QObject *parent) :
-    QObject{ parent },
-    totalTasksCount{}
+    QObject{ parent }
 {
     getDataFromDB();
 
@@ -56,7 +55,7 @@ void TasksList::appendItem(QDate date)
 
     //updateFullDataItems(); //лишнее?
 
-    totalTasksCount++; //we will increase it in qml
+    //totalTasksCount++; //we will increase it in qml
 
     TaskItem item;
 
@@ -98,7 +97,8 @@ void TasksList::removeCompletedItems()
             {
                 mCurrentItems.remove(i);
 
-                totalTasksCount--;
+                //totalTasksCount--;
+                //decreaseTotalTasksCount();
 
                 emit on_postItemRemoved();
 
@@ -121,7 +121,8 @@ void TasksList::removeCompletedItems()
 
             mCurrentItems.remove(i);
 
-            totalTasksCount--; //count
+//            totalTasksCount--; //count
+//            decreaseTotalTasksCount();
 
             emit on_postItemRemoved();
         }
@@ -221,7 +222,7 @@ void TasksList::getDataFromDB()
 
             }
 
-            totalTasksCount = mFullDataItems.size();
+            //totalTasksCount = mFullDataItems.size();
 
             sqlite3_finalize(stmt);
             sqlite3_close(db);
@@ -241,6 +242,7 @@ void TasksList::getDataFromDB()
 
 void TasksList::updateFullDataItems()
 {
+    //std::unique
     std::set <TaskItem> taskItemSet;
 
     for (const auto &elem: mCurrentItems)
@@ -255,30 +257,54 @@ void TasksList::updateFullDataItems()
     {
         if (elem.description.isEmpty())
         {
-            totalTasksCount--;
+            //totalTasksCount--;
             continue;
         }
             mFullDataItems.append(elem);
     }
 
     //одинаковый задания если то выкинет. need check in qml?
-    assert(totalTasksCount == mFullDataItems.size());
+    //assert(totalTasksCount == mFullDataItems.size());
 }
 
-const int TasksList::getTotalTasksCount() const
+//const int TasksList::getTotalTasksCount()
+int TasksList::getTotalTasksCount()
 {
-    return totalTasksCount;
+    updateFullDataItems();
+    return mFullDataItems.size();
+//    return totalTasksCount;
 }
 
+/*
 void TasksList::setTotalTasksCount(int newCount)
 {
     totalTasksCount = newCount;
 }
+*/
+
+/*
+void TasksList::increaseTotalTasksCount()
+{
+   totalTasksCount++;
+   qDebug() << totalTasksCount;
+}
+
+void TasksList::decreaseTotalTasksCount()
+{
+   if (totalTasksCount <= 0)
+       totalTasksCount = 0;
+   else
+       totalTasksCount--;
+
+   qDebug() << totalTasksCount;
+
+}
 
 void TasksList::newTaskIsAccepted(QString descr)
 {
-   //
+  //
 }
+*/
 
 //void TasksList::updateCurrentItems(QDate &date)
 void TasksList::updateCurrentItems(QDate date)
@@ -305,6 +331,6 @@ void TasksList::debug_debug(const QVector<TaskItem> &vec, bool isGlobal)
                 ", date: " << elem.date;
    }
     qDebug() << "vec size is: " << vec.size();
-    qDebug() << "total tasks count is: " << totalTasksCount;
+    //qDebug() << "total tasks count is: " << totalTasksCount;
     qDebug() << "********end******";
 }

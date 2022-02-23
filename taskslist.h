@@ -34,13 +34,23 @@ public:
     bool setItemAt(int index, const TaskItem &item);
 
     Q_INVOKABLE
-    const int getTotalTasksCount() const;
+    int getTotalTasksCount();
 
+    /*
     Q_INVOKABLE
     void setTotalTasksCount(int);
+    */
+
+    /*
+    Q_INVOKABLE
+    void increaseTotalTasksCount();
+
+    Q_INVOKABLE
+    void decreaseTotalTasksCount();
 
     Q_INVOKABLE
     void newTaskIsAccepted(QString);
+    */
 
     void debug_debug(const QVector<TaskItem>&, bool);
 
@@ -63,7 +73,7 @@ private:
     QVector<TaskItem> mFullDataItems;
     QVector<TaskItem> mCurrentItems;
 
-    int totalTasksCount;
+    //int totalTasksCount;
 
     void getDataFromDB();
     void updateFullDataItems();
