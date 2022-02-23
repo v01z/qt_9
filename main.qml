@@ -13,7 +13,6 @@ Window {
     Frame{
         id: frameMain
         anchors.fill: parent
-
         Calendar{
             id: calendar
             onClicked: {
@@ -100,19 +99,32 @@ Window {
             anchors.horizontalCenter: parent.horizontalCenter
             RowLayout{
 
-                Button{
+                RoundButton{
                     id: btnAdd
                     text: qsTr("Добавить задание")
+                    palette{
+                        button: "steelblue"
+                        buttonText: "white"
+                    }
+                    ToolTip.visible: hovered
+                    ToolTip.text: qsTr("Спланировать новое задание")
                     onClicked: {
                         tasksList.appendItem(calendar.selectedDate)
+
                         labelTotalCount.text =  qsTr("Всего заданий: ")
-                                + tasksList.getTotalTasksCount() + " + 1"
+                                + tasksList.getTotalTasksCount() +
+                                "<font color=\"red\"> +1</font>"
                     }
 
                 }
-                Button {
+                RoundButton {
                     id: btnRemove
                     text: qsTr("Удалить отмеченные задания")
+                    palette{
+                        button: "steelblue"
+                        buttonText: "white"
+                    }
+
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Удалить выполненные либо ошибочно введённые")
                     onClicked:  {
@@ -123,29 +135,21 @@ Window {
                 }
             }
         }
-        Button{
+        RoundButton{
             id: buttonClose
             anchors.top: frameButtons.bottom
             anchors.topMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Выход")
+            palette{
+                button: "steelblue"
+                buttonText: "white"
+            }
+
             onClicked: {
                 listView.model.list.writeDataToSQLiteBase()
                 close()
             }
         }
-
-        /*
-        RoundButton {
-            id: btnIncrListViewItems
-            anchors.top: labelDate.bottom
-            anchors.right: parent.right
-            text: "+"
-            palette {
-                button: "#aaddaa"
-            }
-
-        }
-        */
     }
 }
