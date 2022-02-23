@@ -120,7 +120,6 @@ Window {
                         labelTotalCount.text = qsTr("Всего заданий: ")
                                 + tasksList.getTotalTasksCount()
                     }
-
                 }
             }
         }
