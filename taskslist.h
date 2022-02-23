@@ -34,7 +34,7 @@ public:
     bool setItemAt(int index, const TaskItem &item);
 
     Q_INVOKABLE
-    int getTotalTasksCount();
+    const int getTotalTasksCount();
 
     //void debug_debug(const QVector<TaskItem>&, bool);
 
@@ -46,12 +46,12 @@ signals:
     void on_postItemRemoved();
 
 public slots:
-    void appendItem(QDate);
+    void appendItem(const QDate&);
     void removeCompletedItems();
 
     void writeDataToSQLiteBase();
 
-    void updateCurrentItems(QDate);
+    void updateCurrentItems(const QDate&);
 
 private:
     QVector<TaskItem> mFullDataItems;

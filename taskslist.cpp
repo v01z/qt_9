@@ -3,6 +3,7 @@
 #include <QGuiApplication>
 #include <set>
 //#include <QDebug>
+#include <unordered_set>
 
 #define DATABASE_ORGANIZER "database.dblite"
 
@@ -35,7 +36,7 @@ bool TasksList::setItemAt(int index, const TaskItem &item)
     return true;
 }
 
-void TasksList::appendItem(QDate date)
+void TasksList::appendItem(const QDate &date)
 {
 
     if (date < QDate::currentDate())
@@ -195,7 +196,6 @@ void TasksList::getDataFromDB()
 
 void TasksList::updateFullDataItems()
 {
-    //std::unique
     std::set <TaskItem> taskItemSet;
 
     for (const auto &elem: mCurrentItems)
@@ -216,13 +216,13 @@ void TasksList::updateFullDataItems()
     }
 }
 
-int TasksList::getTotalTasksCount()
+const int TasksList::getTotalTasksCount()
 {
     updateFullDataItems();
     return mFullDataItems.size();
 }
 
-void TasksList::updateCurrentItems(QDate date)
+void TasksList::updateCurrentItems(const QDate &date)
 {
     updateFullDataItems();
 
