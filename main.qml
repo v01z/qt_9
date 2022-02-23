@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.5
 import QtQuick.Window 2.12
 import QtQuick.Controls 1.4 //for calendar
+import QtQuick.Dialogs 1.2
 import ru.geekbrains 1.0
 
 Window {
@@ -13,6 +14,7 @@ Window {
     Frame{
         id: frameMain
         anchors.fill: parent
+
         Calendar{
             id: calendar
             onClicked: {
@@ -98,6 +100,12 @@ Window {
             anchors.topMargin: 5
             anchors.horizontalCenter: parent.horizontalCenter
             RowLayout{
+                MessageDialog{
+                    id: warningDialog
+                    title: qsTr("Внимание")
+                    icon: StandardIcon.Warning
+                    text: qsTr("Нельзя запланировать задания в прошлом.\nНо их можно удалить.")
+                }
 
                 RoundButton{
                     id: btnAdd
@@ -109,11 +117,21 @@ Window {
                     ToolTip.visible: hovered
                     ToolTip.text: qsTr("Спланировать новое задание")
                     onClicked: {
-                        tasksList.appendItem(calendar.selectedDate)
 
-                        labelTotalCount.text =  qsTr("Всего заданий: ")
-                                + tasksList.getTotalTasksCount() +
-                                "<font color=\"red\"> +1</font>"
+                        if (calendar.selectedDate.getDate() >= (new Date()).getDate()) //current day
+                        {
+                            tasksList.appendItem(calendar.selectedDate)
+
+                            labelTotalCount.text =  qsTr("Всего заданий: ")
+                                    + tasksList.getTotalTasksCount() +
+                                    "<font color=\"red\"> +1 (создаётся)</font>"
+                        }
+                        else
+                        {
+                            console.log("dialog here")
+                            warningDialog.open()
+
+                        }
                     }
 
                 }
