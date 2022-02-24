@@ -92,9 +92,7 @@ Window {
                                 model.done = false
                             }
 
-                            //checkBoxTaskStatus.checked = model.done
                             model.progress = value
-                           // listView.model.list.updateCurrentItems(calendar.selectedDate)
 
                         }
                     }
@@ -103,11 +101,6 @@ Window {
                         id: labelProgress
                         text: model.progress
 
-                        /*
-                                            onAccepted: {
-                                                model.progress = text
-                                            }
-                                            */
                     }
                     TextField{
                         id: textFieldDescr
@@ -119,11 +112,6 @@ Window {
                                     + tasksList.getTotalTasksCount()
 
                         }
-                        /*
-                        onTextChanged: {
-                            console.log("text changed to " + text)
-                        }
-                        */
                     }
                     TextField{
                         id: textFieldDate

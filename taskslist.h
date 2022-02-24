@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QVector>
 #include <QDate>
-#include <QDebug>
+//#include <QDebug>
 
 struct TaskItem{
     bool done;
@@ -38,7 +38,7 @@ public:
     Q_INVOKABLE
     const int getTotalTasksCount();
 
-    void debug_debug(const QVector<TaskItem>&, bool);
+    //void debug_debug(const QVector<TaskItem>&, bool);
 
 signals:
     void on_preItemAppended();

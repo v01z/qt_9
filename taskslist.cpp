@@ -2,8 +2,6 @@
 #include <sqlite3.h>
 #include <QGuiApplication>
 #include <set>
-//#include <QDebug>
-#include <unordered_set>
 
 #define DATABASE_ORGANIZER "database.dblite"
 
@@ -52,6 +50,7 @@ void TasksList::appendItem(const QDate &date)
 
     item.done = false;
     item.date = date;
+    item.progress = 0;
 
     mCurrentItems.append(item);
 
@@ -65,8 +64,6 @@ void TasksList::removeCompletedItems()
     {
         if (mCurrentItems.at(i).done)
         {
-            qDebug() << "is done";
-
             emit on_preItemRemoved(i);
 
             if (mCurrentItems.at(i).description.isEmpty())
@@ -141,7 +138,7 @@ void TasksList::writeDataToSQLiteBase()
                     elem.description + "\', \'" + (elem.date).toString("yyyy-MM-dd") +
                         "\', " + QString::number(elem.progress) + ");" };
 
-        qDebug() << SQL_QUERY_STR;
+//        qDebug() << SQL_QUERY_STR;
 
         if (sqlite3_exec(db, SQL_QUERY_STR.toStdString().c_str(), 0, 0, &err) != SQLITE_OK)
         {
@@ -252,6 +249,7 @@ void TasksList::updateCurrentItems(const QDate &date)
 
 }
 
+/*
 void TasksList::debug_debug(const QVector<TaskItem> &vec, bool isGlobal)
 {
     qDebug() << "++ " << (isGlobal? "fullGlobalVec":"currentVec");
@@ -264,3 +262,4 @@ void TasksList::debug_debug(const QVector<TaskItem> &vec, bool isGlobal)
     qDebug() << "vec size is: " << vec.size();
     qDebug() << "********end****----------------------------------------**";
 }
+*/
