@@ -70,7 +70,6 @@ Window {
                         id: checkBoxTaskStatus
                         checked: model.done
                         onClicked: model.done = checked
-//                        onStateChanged: model.done
                     }
 
                     Slider{
@@ -83,9 +82,15 @@ Window {
                             labelProgress.text = value
 
                             if (value === 10)
+                            {
                                 checkBoxTaskStatus.checked = true
+                                model.done = true
+                            }
                             if(value < 10)
+                            {
                                 checkBoxTaskStatus.checked = false
+                                model.done = false
+                            }
 
                             //checkBoxTaskStatus.checked = model.done
                             model.progress = value
