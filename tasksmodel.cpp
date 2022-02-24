@@ -30,6 +30,8 @@ QVariant TasksModel::data(const QModelIndex &index, int role) const
         return QVariant(item.description);
     case DateRole:
         return QVariant(item.date);
+    case ProgressRole:
+        return QVariant(item.progress);
     }
 
     return QVariant();
@@ -50,6 +52,9 @@ bool TasksModel::setData(const QModelIndex &index, const QVariant &value, int ro
         break;
     case DateRole:
         item.date = value.toDate();
+        break;
+    case ProgressRole:
+        item.progress = value.toUInt();
         break;
     }
 
@@ -75,6 +80,7 @@ QHash<int, QByteArray> TasksModel::roleNames() const
    names[DoneRole] = "done";
    names[DescriptionRole] = "description";
    names[DateRole] = "date";
+   names[ProgressRole] = "progress";
 
    return names;
 }

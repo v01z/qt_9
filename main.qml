@@ -55,7 +55,7 @@ Window {
 
             ListView{
                 id: listView
-                implicitWidth: 270
+                implicitWidth: 330
                 implicitHeight: 200
                 clip: true
 
@@ -67,8 +67,42 @@ Window {
                     width: listView.width
 
                     CheckBox{
+                        id: checkBoxTaskStatus
                         checked: model.done
                         onClicked: model.done = checked
+//                        onStateChanged: model.done
+                    }
+
+                    Slider{
+                        id: slider
+                        minimumValue: 0
+                        value: model.progress
+                        maximumValue: 10
+                        stepSize: 1
+                        onValueChanged: {
+                            labelProgress.text = value
+
+                            if (value === 10)
+                                checkBoxTaskStatus.checked = true
+                            if(value < 10)
+                                checkBoxTaskStatus.checked = false
+
+                            //checkBoxTaskStatus.checked = model.done
+                            model.progress = value
+                           // listView.model.list.updateCurrentItems(calendar.selectedDate)
+
+                        }
+                    }
+
+                    Label{
+                        id: labelProgress
+                        text: model.progress
+
+                        /*
+                                            onAccepted: {
+                                                model.progress = text
+                                            }
+                                            */
                     }
                     TextField{
                         id: textFieldDescr

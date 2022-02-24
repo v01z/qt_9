@@ -10,21 +10,18 @@ struct TaskItem{
     bool done;
     QString description;
     QDate date;
+    uint8_t progress;
 
     bool operator ==(const TaskItem &other) const
     {
-       return std::tie(other.done, other.description, other.date) ==
-               std::tie(done, description, date);
-        /*
-        return std::tie(other.description, other.date) ==
-               std::tie(description, date);
-               */
+       return std::tie(other.done, other.description, other.date, other.progress) ==
+               std::tie(done, description, date, progress);
     }
 
     bool operator < (const TaskItem &other) const
     {
-       return std::tie(other.done, other.description, other.date) <
-               std::tie(done, description, date);
+       return std::tie(other.done, other.description, other.date, other.progress) <
+               std::tie(done, description, date, progress);
     }
 };
 

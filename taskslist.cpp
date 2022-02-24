@@ -65,6 +65,7 @@ void TasksList::removeCompletedItems()
     {
         if (mCurrentItems.at(i).done)
         {
+            qDebug() << "is done";
 
             emit on_preItemRemoved(i);
 
@@ -104,7 +105,7 @@ void TasksList::writeDataToSQLiteBase()
     const QString SQL_QUERY_DROP { "DROP TABLE IF EXISTS ORGANIZER;" };
 
     const QString SQL_QUERY_CREATE {
-            "CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' INTEGER, \'task\' TEXT, \'date\' TEXT);" };
+            "CREATE TABLE IF NOT EXISTS ORGANIZER (\'done\' INTEGER, \'task\' TEXT, \'date\' TEXT, \'progress\' INTEGER);" };
 
     const QString SQL_QUERY_INSERT_TEMPLATE { "INSERT INTO ORGANIZER VALUES (" };
 
@@ -119,13 +120,13 @@ void TasksList::writeDataToSQLiteBase()
 
     if (sqlite3_exec(db, SQL_QUERY_DROP.toStdString().c_str(), 0, 0, &err) != SQLITE_OK)
     {
-        std::fprintf(stderr, "Ошибка SQL: %sn", err);
+        std::fprintf(stderr, "Ошибка SQL: %s\n", err);
         sqlite3_free(err);
     }
 
     if (sqlite3_exec(db, SQL_QUERY_CREATE.toStdString().c_str(), 0, 0, &err) != SQLITE_OK)
     {
-        std::fprintf(stderr, "Ошибка SQL: %sn", err);
+        std::fprintf(stderr, "Ошибка SQL: %s\n", err);
         sqlite3_free(err);
     }
 
@@ -137,7 +138,10 @@ void TasksList::writeDataToSQLiteBase()
             continue;
 
         QString SQL_QUERY_STR { SQL_QUERY_INSERT_TEMPLATE + (elem.done?'1':'0') + ", \'" +
-                    elem.description + "\', \'" + (elem.date).toString("yyyy-MM-dd") + "\');" };
+                    elem.description + "\', \'" + (elem.date).toString("yyyy-MM-dd") +
+                        "\', " + QString::number(elem.progress) + ");" };
+
+        qDebug() << SQL_QUERY_STR;
 
         if (sqlite3_exec(db, SQL_QUERY_STR.toStdString().c_str(), 0, 0, &err) != SQLITE_OK)
         {
@@ -173,6 +177,7 @@ void TasksList::getDataFromDB()
                 newItem.description = QString((const char*)sqlite3_column_text(stmt, 1));
                 newItem.date = QDate::fromString(QString((const char*)sqlite3_column_text(stmt,2)),
                                                  "yyyy-MM-dd");
+                newItem.progress = sqlite3_column_int(stmt, 3);
 
                 mFullDataItems.append(newItem);
 
