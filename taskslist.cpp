@@ -198,6 +198,16 @@ void TasksList::updateFullDataItems()
 {
     std::set <TaskItem> taskItemSet;
 
+    for (const auto &elemOfFullItems :mFullDataItems)
+    {
+        for (const auto& elemOfCurrentItems :mCurrentItems)
+        {
+            if ((elemOfCurrentItems.description == elemOfFullItems.description) &&
+                    (elemOfCurrentItems.date == elemOfFullItems.date))
+                mFullDataItems.removeOne(elemOfFullItems);
+        }
+    }
+
     for (const auto &elem: mCurrentItems)
         taskItemSet.insert(elem);
 
@@ -214,6 +224,7 @@ void TasksList::updateFullDataItems()
         }
             mFullDataItems.append(elem);
     }
+
 }
 
 const int TasksList::getTotalTasksCount()
@@ -236,17 +247,15 @@ void TasksList::updateCurrentItems(const QDate &date)
 
 }
 
-/*
 void TasksList::debug_debug(const QVector<TaskItem> &vec, bool isGlobal)
 {
     qDebug() << "++ " << (isGlobal? "fullGlobalVec":"currentVec");
-    qDebug() << "********begin******";
+    qDebug() << "********begin********************************************";
    for (const auto &elem :vec)
    {
       qDebug() << "done: " << elem.done << ", descr: " << elem.description <<
                 ", date: " << elem.date;
    }
     qDebug() << "vec size is: " << vec.size();
-    qDebug() << "********end******";
+    qDebug() << "********end****----------------------------------------**";
 }
-*/

@@ -2,6 +2,7 @@ QT += quick
 
 #CONFIG += c++11
 CONFIG += c++17
+#CONFIG += c++20
 #CONFIG += sqlite3
 
 #PKGCONFIG += sqlite3

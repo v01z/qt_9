@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVector>
 #include <QDate>
+#include <QDebug>
 
 struct TaskItem{
     bool done;
@@ -14,6 +15,10 @@ struct TaskItem{
     {
        return std::tie(other.done, other.description, other.date) ==
                std::tie(done, description, date);
+        /*
+        return std::tie(other.description, other.date) ==
+               std::tie(description, date);
+               */
     }
 
     bool operator < (const TaskItem &other) const
@@ -36,7 +41,7 @@ public:
     Q_INVOKABLE
     const int getTotalTasksCount();
 
-    //void debug_debug(const QVector<TaskItem>&, bool);
+    void debug_debug(const QVector<TaskItem>&, bool);
 
 signals:
     void on_preItemAppended();
